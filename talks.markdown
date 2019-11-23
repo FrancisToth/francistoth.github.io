@@ -2,6 +2,7 @@
 layout: page
 title: Talks
 permalink: /talks/
+sidebar_link: true
 ---
 
 [Microservices - Techno Drink 2019](20191120_microservices/index.html)<br/>

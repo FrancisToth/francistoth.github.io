@@ -2,6 +2,7 @@
 layout: page
 title: About
 permalink: /about/
+sidebar_link: true
 ---
 
 <div class="overflow: auto;">
