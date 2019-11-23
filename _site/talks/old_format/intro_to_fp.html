@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Introduction to Functional Programming - by Francis Toth</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/theme/francis.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+
+<aside style="display: block; position: fixed; bottom: 10px; right: 10px; z-index: 30;">
+    <a href="http://www.yoppworks.com"><img src="images/yoppworks.logo-corner-dark.png"  height="30"></a>
+</aside>
+<aside style="display: block; position: fixed; bottom: 0px; left: 10px; z-index: 30;">
+    <a href="https://www.meetup.com/lambda-montreal/"><img src="images/logo.lambda_montreal.jpeg"  height="100"></a>
+</aside>
+
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <aside class="notes">
+                Hello everyone,<br/>
+
+                First of all, thank you all for being here tonight. To be honest I wasn't expecting so many people, so I'm glad to
+                see so much interest in Functional Programming. I've read somewhere that when you start understanding Functional
+                Programming, you become unable to explain it. Well, I'll do my best tonight, and hope you'll be satisfied with it.
+                <br/><br/>
+                Before starting, how many of you guys are not familiar with Scala? Well, the examples in this talk are all in Scala
+                but if you are not familiar with the language, that should be ok. In any case, if during this talk, there is
+                something you don't understand, please interrupt me, I'll be glad to help you.
+                <br/><br/>
+                Secondly, I'm far from being a Functional Programming expert and I may not be accurate sometime. If this
+                happens, and you think you can contribute to this talk, please do. You will be very welcome.
+                <br/><br/>
+                By the way, how many of you guys consider themselves as Functional Programming experts? Same question but for those
+                who feel like intermediate? Alright, any beginners? So, I don't know about you guys, but the first time I've learnt
+                about Functional Programming, It sounded like jibberish to me. Functional Programming can be indeed very
+                obscure some time as it has deep abstract mathematical roots. Fortunately, we won't cover those today
+                and will instead tackle Functional Programming from a very practical angle.
+                <br/><br/>
+                Alright, let's get this started.
+            </aside>
+
+            <h2 style="display: inline-block;"><img style="vertical-align: text-bottom; margin: -2px 0; border: 0; background-color: #243044" src="images/intro_to_fp/haskell-logo.png" width="11%"/> Functional Programming</h2>
+        </section>
+
+        <section>
+            <h2>Expressions Oriented</h2>
+            <section data-transition="none none">
+                <pre><code data-trim data-noescape style="font-size: 1.5em; line-height: 1.2em">42
+x = 41 + 1
+y = x * 2
+z = add(x, 2)</code></pre>
+                <pre class="fragment"><code data-trim data-noescape style="font-size: 1.5em; line-height: 1.2em">x = 42
+y = x + 1 == 42 + 1</code></pre>
+                <pre class="fragment"><code data-trim data-noescape style="font-size: 1.5em; line-height: 1.2em">x = (2 * 2) + (3 * 4)
+x = 2 * 2 + 3 * 4
+x = 4 + 12
+x = 16</code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.5em; line-height: 1.2em">
+val add1: Int => Int = (i:Int) => i + 1
+val sub1: Int => Int = (i:Int) => i - 2
+
+def compose[A, B, C](
+  f: B => C,
+  g: A => B,
+): A => C = { a => f(g(a)) }
+
+val add1AndSub2 = compose(add1, sub2)
+add1AndSub1(1) == 0
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.5em; line-height: 1.2em">
+&nbsp; (Int, Int) => Int becomes Int => Int => Int</code></pre>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.4em; line-height: 1.3em">
+val sum:     (Int, Int) => Int = (x, y) => x + y
+val curried: Int => Int => Int = x => (y => x + y)
+
+curried(1)(3) == 4
+            </code></pre><br/>
+            <div style="font-size: 30px; margin:0; padding:0; text-align: left"><i>"Currying is the technique of translating the evaluation of
+                a function that takes multiple arguments into evaluating a sequence of functions, each with a single
+                argument."</i> - Wikipedia</div>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.3em">
+val f3: (Int, Int, Int) => Int = (x, y, z) => x + y + z
+val f2: (Int, Int) => Int = f3(0, _, _)
+
+f2(40, 2) == 42
+                </code></pre><br/>
+                <div style="font-size: 30px; margin:0; padding:0; text-align: left"><i>"Partial application refers to the process of fixing a number of arguments to a function, producing
+                another function of smaller arity"</i> - Wikipedia</div>
+            </section>
+            <section data-transition="none none">
+                <ul>
+                    <li class="fragment"><span style="color:#42BAE8"><b>Total</b></span>: A function must yield a value for <i>every</i> possible input.</li>
+                    <li class="fragment"><span style="color:#42BAE8"><b>Pure</b></span>: A function’s only effect must be the computation of its return value</li>
+                    <li class="fragment"><span style="color:#42BAE8"><b>Deterministic</b></span>: A function must yield the <i>same</i> value for the <i>same</i> input.
+                        <br/><br/><br/>
+                        <div style="text-align: right"><span style="font-size: 20px">
+                            Taken from <i>"A Beginner-Friendly Tour through Functional Programming in Scala"</i>.<br/><b>John A De Goes</b>.
+                        </span></div>
+                    </li>
+                </ul>
+            </section>
+        </section>
+        <section data-transition="none none">
+            <h2>Inputs / Outputs</h2>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.5em; line-height: 1.2em">
+def foo(number: String): Int = number.toInt
+
+def bar(input: String): Int = { 
+  println("performing bar")
+  foo(input)
+}</code></pre>
+            </section>
+        </section>
+        <section data-transition="none none">
+            <h2>Side Effects</h2>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+def parse(integer: String): Int = {
+  if(numberIsNotAString(number)) {
+    throw new IllegalArgumentException(/*...*/)
+  } else {
+    // parsing logic returning parsed integer
+  }
+}</code></pre>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+def ask(question: String): String = {
+  if(question == "What's the meaning of life?") {
+    "42"
+  else
+    null // does not compile in Scala
+}</code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+var n = 41
+def add1(y: Int): Int = { 
+  n = n + 1
+  y + 1
+}
+// ...
+val m = add1(41)
+assert(n == 42)</code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+def readIntegerFromFile(filePath: String): Int = { 
+  // throws exceptions
+  val content = readFromFile(filePath)
+  // ...
+}</code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="text-align: justify">
+                <i>"A function having a side-effect is a function which has an observable interaction with its calling
+                    functions or the outside world besides returning a value"</i><br/>
+                    <div style="text-align: right">Wikipedia.</div>
+                </div>
+            </section>
+            <section data-transition="none none">
+                <aside class="notes">
+                    Scala for example, contains some functions which implementation have been optimized using mutable
+                    variables. Despite that, these functions are still considered referentially transparent as they do
+                    exactly what their signatures suggest. Strict Functional Programming does not allow mutable
+                    variables, but from a pragmatic point of view, this sounds alright.
+                </aside>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.5em; line-height: 1.2em">
+// List.scala
+override def drop(n: Int): List[A] = {
+  var these = this
+  var count = n
+  while (!these.isEmpty && count > 0) {
+    these = these.tail
+    count -= 1
+  }
+  these
+}</code></pre>
+            </section>
+            <section data-transition="none none">
+                <img style="vertical-align: text-bottom;margin-top:40px; border: 0; background-color: #243044"
+                     src="images/intro_to_fp/side-effects.png" width="330"/>
+            </section>
+        </section>
+        <section>
+            <h2>Total Functions</h2>
+            <span style="font-size: 30px">Total: A function must yield a value for <i>every</i> possible input.</span>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+def parse(integer: String): Int = {
+  if(numberIsNotAString(number)) {
+    throw new IllegalArgumentException(/*...*/)
+  } else { /* parsing logic */}
+}</code></pre>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+def ask(question: String): String = {
+  if(question == "What's the meaning of life?") {
+    "42"
+  else
+    null // does not compile in Scala
+}</code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+trait Either[A, B]
+case class Left[A, B](a: A)  extends Either[A, B]
+case class Right[A, B](b: B) extends Either[A, B]
+
+def parse(integer: String): Either[Exception, Int]</code></pre>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+trait Maybe[A]
+case class Some[A](a: A) extends Maybe[A]
+case class None[A]()     extends Maybe[A]
+
+def ask(question: String): Maybe[String]
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+case class Foo(first: String, second: Int)
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+Foo("bar", 42) match {
+  case Foo(x, 42)    => println(s"$x == 42")
+  case Foo("bar", _) => println(s"bar != 42")
+  case _             => println("Default case")
+}
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+Foo("bar", 74) match {
+  case Foo(x, 42)    => println(s"$x == 42")
+  case Foo("bar", _) => println(s"bar != 42")
+  case _             => println("Default case")
+}
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+def ask(question: String): Maybe[String] = {
+  if(question == "What's the meaning of life?") {
+    Some("42")
+  else
+    None
+}
+
+ask("What's the meaning of life?") match {
+  case Some(answer)  =>
+    println(s"The answer is: $answer")
+  case None          =>
+    println("I cannot answer this question.")
+}
+                </code></pre>
+            </section>
+        </section>
+        <section>
+            <h2>Pure Functions</h2>
+            <span style="font-size: 30px">Pure: A function’s only effect must be the computation of its return value</span>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+var n = 41
+def add1(x: Int): Int = { 
+  n = n + 1
+  x + 1
+}
+// ...
+val m = add1(41)
+assert(n == 42)</code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+def add1(x: Int, y: Int): (Int, Int) = { 
+  (x + 1, n + 1)
+}
+// ...
+val n = 41
+val (m, n2) = add1(41, n)
+assert(n2 == 42)</code></pre>
+            </section>
+        </section>
+        <section>
+            <h2>Deterministic Functions</h2>
+            <span style="font-size: 30px">Deterministic: A function must yield the <i>same</i> output for the <i>same</i> input.</span>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.3em; line-height: 1.2em">
+val s: String = readInput()
+printOnConsole(s)
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+trait ConsoleIO
+case class Read(process: String => ConsoleIO) extends ConsoleIO
+case class Write(line: String, then: ConsoleIO) extends ConsoleIO
+case object End extends ConsoleIO
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+val program: ConsoleIO = Read { line => Write(line, End) }
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+def interpret(program: ConsoleIO): Unit = program match {
+  case Read(process) => interpret(process(readLine()))
+  case Write(line, next) => println(line); interpret(next)
+  case End => println("Done !")
+}
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <div style="margin-top: 60px">&nbsp;</div>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+trait ConsoleIO
+case class Read(process: String => ConsoleIO) extends ConsoleIO
+case class Write(line: String, then: ConsoleIO) extends ConsoleIO
+case object End extends ConsoleIO
+
+val program: ConsoleIO = Read { line => Write(line) }
+interpret(program)
+                </code></pre>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+def interpret(program: ConsoleIO): Unit = program match {
+  case Read(process) => interpret(process(readLine()))
+  case Write(line, next) => println(line); interpret(next)
+  case End => println("Done !")
+}
+                </code></pre>
+            </section>
+        </section>
+
+        <section data-transition="none none">
+            <ul style="list-style-type: none;">
+                <li><ul>
+                    <li><span style="font-size: 30px;color: #42BAE8;">Total</span>: A function must yield a value for <i>every</i> possible input.</li>
+                    <li><span style="font-size: 30px;color: #42BAE8;">Pure</span>: A function only effect must be the computation of its return value</li>
+                    <li><span style="font-size: 30px;color: #42BAE8;">Deterministic</span>: A function must yield the <i>same</i> value for the <i>same</i> input.</li>
+                </ul></li>
+                <li style="list-style-type: none;">&nbsp;</li>
+                <li><ul>
+                    <li>Side effects break Referential Transparency :(</li>
+                    <li>Side-Effects must be explicit</li>
+                    <li>Separate the 'what' from the 'how'</li>
+                </ul></li>
+            </ul>
+        </section>
+
+        <section data-transition="none none">
+            <h2>Composition</h2>
+            <section data-transition="none none">
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+trait Either[A, B]
+case class Left[A, B](a: A)  extends Either[A, B]
+case class Right[A, B](b: B) extends Either[A, B]
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+val foo: Either[Exception, Int] = ???
+val result = foo match {
+  case Right(y) => y + 1
+  case Left(ex) => ??? // what are we supposed to return here???
+}
+println(result)
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+val success: Either[Exception, Int] = Right(42)
+
+val failure: Either[Exception, Int] =
+  Left(new RuntimeException())
+
+map( _ + 1 )(success) // returns 43
+map( _ + 1 )(failure) // return failure
+
+def map[A, B](f: A => B)
+             (e: Either[Exception, A]): Either[Exception, B] =
+  e match {
+    case Right(v) => Right(f(v))
+    case Left(e) => Left(e)
+  }
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+val foo: Either[Exception, Int] = ???
+val bar: Int => Either[Exception, String] = ???
+
+// meh !
+val fooBar: Either[Exception, Either[Exception, String]] =
+  map(bar)(foo)
+
+val fooBar: Either[Exception, String] = chain(foo, bar)
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+def chain[E, B, C](f: B => Either[E, C])
+                  (e: Either[E, B]): Either[E, C] = e match {
+  case Right(b) => f(b)
+  case Left(e) => Left(e)
+}
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+def map[A, B](f: A => B)(m: Maybe[A]): Maybe[B] =
+  m match {
+    case Some(a) => Some(f(a))
+    case None() => None()
+  }
+
+def chain[A, B](f: A => Maybe[B])(m: Maybe[A]): Maybe[B] =
+  m match {
+    case Some(a) => f(a)
+    case None() => None()
+  }
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code data-trim data-noescape style="font-size: 1.2em; line-height: 1.0em">
+// Algebraic data types
+1, 2, 3...
+
+// Operations
+1 + 2 = 3
+3 * 2 = 6
+
+// Laws
+0 + x = x
+1 * x = x
+                </code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+def map[A, B](f: A => B)(m: Maybe[A]): Maybe[B] = m match {
+  case Some(a) => Some(f(a))
+  case None() => None()
+}
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+def noop[A](a: A): A = a
+map(noop)(foo) == foo
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.2em">
+val f: Int => Int = ???
+val g: Int => String = ???
+
+map(compose(f, g))(foo) == compose(map(f),map(g))(foo)
+                </code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+trait Functor[F[_]] {
+  def pure[A](a: A): F[A]
+  def map[A, B](fa: F[A], f: A => B): F[A]
+}               </code></pre>
+                <pre><code class="haskell" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+# identity law
+map(noop)(foo) == foo
+
+# composition law
+map(compose(f, g))(foo) == compose(map(f),map(g))(foo)
+                </code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+val foo: Int => Int => String = x => y => s"$x, $y"
+
+val m1: Maybe[Int] = Some(1)
+val m2: Maybe[Int] = Some(2)
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+val pFoo: Maybe[Int => String] =
+  map(foo)(m1) // Some(y => "1, $y")
+                </code></pre>
+
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+def ap[A, B](mf: Maybe[A => B])(ma: Maybe[A]): Maybe[B] =
+  ma match {
+   case Some(a) => map(f => f(a))(mf)
+   case None()  => None()
+  }
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+val result: Maybe[String] = ap(pFoo)(m2)
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+trait Applicative[F[_]] extends Functor[F] {
+  def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
+}
+                </code></pre>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+ap(ff)(fx) == map(f)(fx)
+                </code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+def chain[A, B](f: A => Maybe[B])(m: Maybe[A]): Maybe[B] =
+  m match {
+    case Some(a) => f(a)
+    case None() => None()
+  }
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+val f: Int => Maybe[Int] = ???
+val pure: Int => Maybe[Int] = (i: Int) => Some(i)
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+chain(pure)(Some(42)) == Some(42)
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+chain(f)(Some(42)) == f(42)
+                </code></pre>
+                <pre class="fragment"><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+val g: Int => Maybe[Int] = ???
+
+chain(chain(Some(42), f), g)
+  == chain(Some(42), i => chain(f(i), g))
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+trait Monad[M[_]] {
+  def flatMap[A, B](ma: M[A], f: A => M[B]): M[A]
+}               </code></pre>
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+// Left identity law
+chain(pure)(Some(42)) == Some(42)
+
+// Right identity law
+chain(f)(Some(42)) == f(42)
+
+// Composition law
+chain(chain(Some(42), f), g)
+  == chain(Some(42), i => chain(f(i), g))
+                </code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala" data-trim data-noescape style="font-size: 1.1em; line-height: 1.0em">
+trait Functor[F[_]] {
+  def pure[A](a: A): F[A]
+  def map[A, B](fa: F[A], f: A => B): F[A]
+}
+
+trait Monad[M[_]] {
+  def flatMap[A, B](ma: M[A], f: A => M[B]): M[A]
+}
+
+trait Applicative[F[_]] extends Functor[F] {
+  def lift[A, B](ff: F[A => B])(fa: F[A]): F[B]
+}
+                </code></pre>
+            </section>
+            <section data-transition="none none">
+                <img style="vertical-align: text-bottom;margin-top:40px; border: 0; background-color: #243044"
+                     src="images/intro_to_fp/g.png" width="550"/>
+                <img class="fragment" style="vertical-align: text-bottom;margin-top:40px; border: 0; background-color: #243044"
+                     src="images/intro_to_fp/39070116.jpg" width="387"/>
+            </section>
+        </section>
+        <!--16:30-->
+        <section data-transition="none none">
+            <h2>Conclusion</h2>
+            <ul>
+                <li><span style="font-size: 30px;color: #42BAE8;">Learn You a Haskell for Great Good! : </span><span style="font-size: 25px">by Miran Lipovaca</span></li>
+                <li><span style="font-size: 30px;color: #42BAE8;">Functional Programming in Scala : </span><span style="font-size: 25px">by Paul Chiusano and Rúnar Bjarnason</span></li>
+                <li><span style="font-size: 30px;color: #42BAE8;">http://degoes.net/: </span><span style="font-size: 25px">by John A De Goes</span></li>
+                <li><span style="font-size: 30px;color: #42BAE8;">https://wiki.haskell.org/Typeclassopedia: </span><span style="font-size: 25px">by Brent Yorgey</span></li>
+                <li><span style="font-size: 30px;color: #42BAE8;">Functional and Reactive Domain Modeling: </span><span style="font-size: 25px">by Debasish Ghosh</span></li>
+                <li><span style="font-size: 30px;color: #42BAE8;">Real World Haskell: </span><span style="font-size: 25px">by Bryan O'Sullivan, Don Stewart, and John Goerzen</span></li>
+                <li style="list-style-type: none;">&nbsp;</li>
+                <li class="fragment"><span style="font-size: 30px;color: #42BAE8;">Lambda Montreal </span><span style="font-size: 25px">by reaaaallllly nice folks :)</span></li>
+            </ul>
+        </section>
+        <section data-transition="none none">
+            <img style="background-color: transparent"
+                 src="images/yoppworks.logo-corner-dark.png"/>
+            Thank you ! Questions ?
+        </section>
+    </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+
+    // Full list of configuration options available at:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+            { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+            { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+            { src: 'plugin/zoom-js/zoom.js', async: true },
+            { src: 'plugin/notes/notes.js', async: true }
+        ]
+    });
+
+</script>
+</body>
+</html>

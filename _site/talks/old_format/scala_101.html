@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Scala 101 - by Francis Toth</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/theme/francis.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+        <section>
+            <h2 style="display: inline-block;"><img style="vertical-align: text-bottom; margin: 18px 0; border: 0" src="images/ico.scala.png" width="7%"/> Scala 101</h2>
+        </section>
+
+        <section>
+            <h2>Disclaimer</h2>
+            <ul>
+                <li class="fragment">I'm no Scala guru</li>
+                <li class="fragment">This is a quick crash course</li>
+                <li class="fragment">Stop me whenever you feel lost</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Quick overview</h2>
+            <ul>
+                <li class="fragment">Created in 2004</li>
+                <li class="fragment">Java++</li>
+                <li class="fragment">Functional + OO</li>
+                <li class="fragment">Designed to scale</li>
+                <li class="fragment">Popular</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Agenda</h2>
+        </section>
+
+        <section>
+            <h2>Values and variables</h2>
+            <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px"><span style="color: #00CC33;">val</span>/<span style="color: #FF6600; ">var</span></span> <span class="hljs-title">name</span>:</span> <span class="hljs-type" style="color: #3399FF;">Type</span> = <span style="color: #FF6600;">Value</span></pre>
+				<pre><code class="scala">val value: String = "Hello"
+var variable: String = "Confoo"</code></pre>
+            <ul>
+                <li class="fragment">Value : Immutable and can be only assigned once</li>
+                <li class="fragment">Variable : Mutable, re-assignable and discouraged</li>
+            </ul>
+        </section>
+
+        <section>
+            <section data-transition="none none">
+                <pre><code class="scala">// Case classes
+case class Foo(s1: String, s2: String)
+val foo = Foo("Hello", "World")
+
+Foo("Hello", "World") == Foo("Hello", "World") // returns true</code></pre>
+                <pre class="opaque"><code class="scala">// Traits
+trait Behavior1 { def doSomething() = /*...*/ }
+trait Behavior2 { def doSomethingElse() = /*...*/ }
+
+case class Foo extends Behavior1 with Behavior2
+/* ... with BehaviorN */</code></pre>
+
+                <pre class="opaque"><code class="scala">// Objects
+object Bar {
+  def newBarWithFalse = new Bar(false)
+}
+class Bar(val foo: Boolean)
+/*...*/
+Bar.newBarWithFalse // returns Bar(false)</code></pre>
+
+                <pre class="opaque"><code class="scala">// Common classes
+class Foo(val s1: String, var s2: String = "bar")
+val foo = new Foo(s1 = "Hello World")</code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre class="opaque"><code class="scala">// Case classes
+case class Foo(s1: String, s2: String)
+val foo = Foo("Hello", "World")
+
+Foo("Hello", "World") == Foo("Hello", "World") // returns true</code></pre>
+                <pre><code class="scala">// Traits
+trait Behavior1 { def doSomething() = /*...*/ }
+trait Behavior2 { def doSomethingElse() = /*...*/ }
+
+case class Foo extends Behavior1 with Behavior2
+/* ... with BehaviorN */</code></pre>
+
+                <pre class="opaque"><code class="scala">// Objects
+object Bar {
+  def newBarWithFalse = new Bar(false)
+}
+class Bar(val foo: Boolean)
+/*...*/
+Bar.newBarWithFalse // returns Bar(false)</code></pre>
+
+                <pre class="opaque"><code class="scala">// Common classes
+class Foo(val s1: String, var s2: String = "bar")
+val foo = new Foo(s1 = "Hello World")</code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre class="opaque"><code class="scala">// Case classes
+case class Foo(s1: String, s2: String)
+val foo = Foo("Hello", "World")
+
+Foo("Hello", "World") == Foo("Hello", "World") // returns true</code></pre>
+                <pre class="opaque"><code class="scala">// Traits
+trait Behavior1 { def doSomething() = /*...*/ }
+trait Behavior2 { def doSomethingElse() = /*...*/ }
+
+case class Foo extends Behavior1 with Behavior2
+/* ... with BehaviorN */</code></pre>
+
+                <pre><code class="scala">// Objects
+object Bar {
+  def newBarWithFalse = new Bar(false)
+}
+class Bar(val foo: Boolean)
+/*...*/
+Bar.newBarWithFalse // returns Bar(false)</code></pre>
+
+                <pre class="opaque"><code class="scala">// Common classes
+class Foo(val s1: String, var s2: String = "bar")
+val foo = new Foo(s1 = "Hello World")</code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre class="opaque"><code class="scala">// Case classes
+case class Foo(s1: String, s2: String)
+val foo = Foo("Hello", "World")
+
+Foo("Hello", "World") == Foo("Hello", "World") // returns true</code></pre>
+                <pre class="opaque"><code class="scala">// Traits
+trait Behavior1 { def doSomething() = /*...*/ }
+trait Behavior2 { def doSomethingElse() = /*...*/ }
+
+case class Foo extends Behavior1 with Behavior2
+/* ... with BehaviorN */</code></pre>
+
+                <pre class="opaque"><code class="scala">// Objects
+object Bar {
+  def newBarWithFalse = new Bar(false)
+}
+class Bar(val foo: Boolean)
+/*...*/
+Bar.newBarWithFalse // returns Bar(false)</code></pre>
+
+                <pre><code class="scala">// Common classes
+class Foo(val s1: String, var s2: String = "bar")
+val foo = new Foo(s1 = "Hello World")</code></pre>
+            </section>
+        </section>
+
+        <section>
+            <h2>Functions</h2>
+            <section data-transition="none none">
+                <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">name</span><span style="color: #00CC33;">(arg: Type,...)</span>:</span> <span class="hljs-type" style="color: #3399FF;">Returned_Type</span> = <span style="color: #FF6600;">body</span></pre>
+                <div style="visibility: hidden">
+                    <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">substract</span><span style="color: #00CC33;">(x:Int, y:Int)</span>:</span> <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">{ x - y }</span></pre>
+                    <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">printHelloWorld</span>:</span> <span class="hljs-type" style="color: #3399FF;">Unit</span> = <span style="color: #FF6600;">println("hello world !")</span></pre>
+                    <pre><code class="scala">def foo(): Int = {
+                        def bar(): Int = { ... }
+                    }</code></pre>
+                    Anonymous
+                    <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">name</span>:</span> <span class="hljs-type" style="color: #00CC33;">(arg type,...)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Returned Type</span> = <span style="color: #FF6600;">body</span></pre>
+                    <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">multiply</span>:</span> <span style="color: #00CC33;">(<span class="hljs-type">Int</span>, <span class="hljs-type">Int</span>)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">(x,y) =&gt; x * y</span></pre>
+                </div>
+            </section>
+            <section data-transition="none none">
+                <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">name</span><span style="color: #00CC33;">(arg: Type,...)</span>:</span> <span class="hljs-type" style="color: #3399FF;">Returned_Type</span> = <span style="color: #FF6600;">body</span></pre>
+                <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">substract</span><span style="color: #00CC33;">(x:Int, y:Int)</span>:</span> <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">{ x - y }</span></pre>
+                <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">printHelloWorld</span>:</span> <span class="hljs-type" style="color: #3399FF;">Unit</span> = <span style="color: #FF6600;">println("hello world !")</span></pre>
+                <pre class="fragment"><code class="scala">def foo(): Int = {
+  def bar(): Int = { ... }
+}</code></pre>
+                <div style="visibility: hidden">
+                    Anonymous
+                    <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">name</span>:</span> <span class="hljs-type" style="color: #00CC33;">(arg type,...)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Returned Type</span> = <span style="color: #FF6600;">body</span></pre>
+                    <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">multiply</span>:</span> <span style="color: #00CC33;">(<span class="hljs-type">Int</span>, <span class="hljs-type">Int</span>)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">(x,y) =&gt; x * y</span></pre>
+                </div>
+            </section>
+            <section data-transition="none none">
+                <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">name</span><span style="color: #00CC33;">(arg: Type,...)</span>:</span> <span class="hljs-type" style="color: #3399FF;">Returned_Type</span> = <span style="color: #FF6600;">body</span></pre>
+                <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">substract</span><span style="color: #00CC33;">(x:Int, y:Int)</span>:</span> <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">{ x - y }</span></pre>
+                <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">printHelloWorld</span>:</span> <span class="hljs-type" style="color: #3399FF;">Unit</span> = <span style="color: #FF6600;">println("hello world !")</span></pre>
+                <pre><code class="scala">def foo(): Int = {
+  def bar(): Int = { ... }
+}</code></pre>
+                Anonymous
+                <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">name</span>:</span> <span class="hljs-type" style="color: #00CC33;">(arg type,...)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Returned Type</span> = <span style="color: #FF6600;">body</span></pre>
+                <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">multiply</span>:</span> <span style="color: #00CC33;">(<span class="hljs-type">Int</span>, <span class="hljs-type">Int</span>)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">(x,y) =&gt; x * y</span></pre>
+            </section>
+        </section>
+
+        <section>
+            <h2>Higher Order Functions</h2>
+            <section data-transition="none none">
+                <div class="fragment">
+                    <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">func</span>:</span> <span class="hljs-type" style="color: #00CC33;">(arg type,...)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Returned Type</span> = <span style="color: #FF6600;">body</span></pre>
+                    <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">multiply</span>:</span> <span style="color: #00CC33;">(<span class="hljs-type">Int</span>, <span class="hljs-type">Int</span>)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">(x,y) =&gt; x * y</span></pre>
+                </div>
+
+				<pre class="fragment customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">foo</span>:</span> <span class="hljs-type" style="color: #00CC33;">Int</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">x => x + 1</span>
+<span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">bar</span>(</span><span class="hljs-type" style="color: #00CC33;">f: Int => Int</span>, </span><span class="hljs-type" style="color: #00CC33;">number: Int </span>): <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">f(number)</span>
+<span class="hljs-function" style="margin-left:7px">bar</span>(<span class="hljs-type" style="color: #00CC33;">foo, 41</span>)<span class="hljs-comment"> // returns 42</span></pre>
+
+                <div style="visibility: hidden">
+
+				<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">bar</span>(</span><span class="hljs-type" style="color: #00CC33;">f: Int => Int</span>): <span class="hljs-type" style="color: #3399FF;">(Int, Int) => Int</span> = <span style="color: #FF6600;">(x, y) => f(x + y)</span>
+<span class="hljs-function" style="margin-left:7px">bar</span>(<span class="hljs-type" style="color: #00CC33;">x => x * 2</span>)(<span class="hljs-type" style="color: #00CC33;">2</span>, <span class="hljs-type" style="color: #00CC33;">3</span>)<span class="hljs-comment"> // returns 10</span></pre></pre>
+
+                <div>
+                    Multiple-argument-list function
+					<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">reduce</span>(<span style="color: #00CC33;">combine: (Int, Int) => Int</span>)
+          <span style="margin-left:7px">(</span><span style="color: #00CC33">x: Int</span>, <span style="color: #00CC33;margin-left:7px">y: Int</span>):</span> <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">combine(x, y)</span></pre>
+					<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">sum</span>:</span> <span class="hljs-type" style="color: #00CC33;">(Int, Int)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">reduce((x,y) => x + y)</span>
+<span class="hljs-function" style="margin-left:7px">sum</span>(<span class="hljs-type" style="color: #00CC33;">1, 2</span>)<span class="hljs-comment"> // returns 3</span></pre>
+                </div>
+            </div>
+            </section>
+
+            <section data-transition="none none">
+                <div>
+                    <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">func</span>:</span> <span class="hljs-type" style="color: #00CC33;">(arg type,...)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Returned Type</span> = <span style="color: #FF6600;">body</span></pre>
+                    <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">multiply</span>:</span> <span style="color: #00CC33;">(<span class="hljs-type">Int</span>, <span class="hljs-type">Int</span>)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">(x,y) =&gt; x * y</span></pre>
+                </div>
+
+				<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">foo</span>:</span> <span class="hljs-type" style="color: #00CC33;">Int</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">x => x + 1</span>
+<span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">bar</span>(</span><span class="hljs-type" style="color: #00CC33;">f: Int => Int</span>, </span><span class="hljs-type" style="color: #00CC33;">number: Int </span>): <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">f(number)</span>
+<span class="hljs-function" style="margin-left:7px">bar</span>(<span class="hljs-type" style="color: #00CC33;">foo, 41</span>)<span class="hljs-comment"> // returns 42</span></pre>
+
+				<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">bar</span>(</span><span class="hljs-type" style="color: #00CC33;">f: Int => Int</span>): <span class="hljs-type" style="color: #3399FF;">(Int, Int) => Int</span> = <span style="color: #FF6600;">(x, y) => f(x + y)</span>
+<span class="hljs-function" style="margin-left:7px">bar</span>(<span class="hljs-type" style="color: #00CC33;">x => x * 2</span>)(<span class="hljs-type" style="color: #00CC33;">2</span>, <span class="hljs-type" style="color: #00CC33;">3</span>)<span class="hljs-comment"> // returns 10</span></pre></pre>
+
+                <div class="fragment">
+                    Multiple-argument-list function
+					<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">reduce</span>(<span style="color: #00CC33;">combine: (Int, Int) => Int</span>)
+          <span style="margin-left:7px">(</span><span style="color: #00CC33">x: Int</span>, <span style="color: #00CC33;margin-left:7px">y: Int</span>):</span> <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">combine(x, y)</span></pre>
+					<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">sum</span>:</span> <span class="hljs-type" style="color: #00CC33;">(Int, Int)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">reduce((x,y) => x + y)</span>
+<span class="hljs-function" style="margin-left:7px">sum</span>(<span class="hljs-type" style="color: #00CC33;">1, 2</span>)<span class="hljs-comment"> // returns 3</span></pre>
+                </div>
+            </section>
+            <section data-transition="none none">
+                <div>
+                    <pre class="customcode" style="background-color: #4F4F4F"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">func</span>:</span> <span class="hljs-type" style="color: #00CC33;">(arg type,...)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Returned Type</span> = <span style="color: #FF6600;">body</span></pre>
+                    <pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">multiply</span>:</span> <span style="color: #00CC33;">(<span class="hljs-type">Int</span>, <span class="hljs-type">Int</span>)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">(x,y) =&gt; x * y</span></pre>
+                </div>
+
+				<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">foo</span>:</span> <span class="hljs-type" style="color: #00CC33;">Int</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">x => x + 1</span>
+<span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">bar</span>(</span><span class="hljs-type" style="color: #00CC33;">f: Int => Int</span>, </span><span class="hljs-type" style="color: #00CC33;">number: Int </span>): <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">f(number)</span>
+<span class="hljs-function" style="margin-left:7px">bar</span>(<span class="hljs-type" style="color: #00CC33;">foo, 41</span>)<span class="hljs-comment"> // returns 42</span></pre>
+
+				<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">bar</span>(</span><span class="hljs-type" style="color: #00CC33;">f: Int => Int</span>): <span class="hljs-type" style="color: #3399FF;">(Int, Int) => Int</span> = <span style="color: #FF6600;">(x, y) => f(x + y)</span>
+<span class="hljs-function" style="margin-left:7px">bar</span>(<span class="hljs-type" style="color: #00CC33;">x => x * 2</span>)(<span class="hljs-type" style="color: #00CC33;">2</span>, <span class="hljs-type" style="color: #00CC33;">3</span>)<span class="hljs-comment"> // returns 10</span></pre></pre>
+
+                <div>
+                    Multiple-argument-list function
+					<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">def</span> <span class="hljs-title">reduce</span>(<span style="color: #00CC33;">combine: (Int, Int) => Int</span>)
+          <span style="margin-left:7px">(</span><span style="color: #00CC33">x: Int</span>, <span style="color: #00CC33;margin-left:7px">y: Int</span>):</span> <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">combine(x, y)</span></pre>
+					<pre class="customcode"><span class="hljs-function"><span class="hljs-keyword" style="margin-left:7px">val</span> <span class="hljs-title">sum</span>:</span> <span class="hljs-type" style="color: #00CC33;">(Int, Int)</span> =&gt; <span class="hljs-type" style="color: #3399FF;">Int</span> = <span style="color: #FF6600;">reduce((x,y) => x + y)</span>
+<span class="hljs-function" style="margin-left:7px">sum</span>(<span class="hljs-type" style="color: #00CC33;">1, 2</span>)<span class="hljs-comment"> // returns 3</span></pre>
+                </div>
+            </section>
+        </section>
+
+        <section>
+            <h2>Type inference</h2>
+            <section data-transition="none none">
+                <pre class="fragment"><code class="scala">val integer: Int = 1
+val integer = 1</code></pre>
+				<pre class="fragment"><code class="scala">def getData = { "hello world !" }
+def printHelloWorld = { println("hello world !") }
+val multiply = (x:Int, y:Int) => x * y</code></pre>
+                <div style="visibility: hidden">
+                    <pre><code class="scala">val list = List(1,2,3)
+list.filter(int => int > 1)
+list.filter(_ > 1) // returns List(2,3)</code></pre>
+                    <pre><code class="scala">def reduce(f: (Int, Int) => Int)(x:Int, y:Int) = f(x,y)
+reduce((a,b) => a + b)(1, 2) // a and b's type are inferred
+reduce(_ + _)(1, 2)</code></pre>
+                </div>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala">val integer: Int = 1
+val integer = 1</code></pre>
+				<pre><code class="scala">def getData = { "hello world !" }
+def printHelloWorld = { println("hello world !") }
+val multiply = (x:Int, y:Int) => x * y</code></pre>
+                <pre class="customcode"><span class="line"><span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">list</span> =</span> <span class="hljs-type">List</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)</span>
+<span class="line">list.filter(<span style="color:#00CC33">int =&gt; int</span> &gt; <span style="color:#FF6600">1</span>)</span>
+<span class="line">list.filter(<span style="color:#00CC33">_</span> &gt; <span style="color:#FF6600">1</span>) <span class="hljs-comment">// returns List(2,3)</span></span></pre>
+                <div style="visibility: hidden">
+                    <pre><code class="scala">def reduce(f: (Int, Int) => Int)(x:Int, y:Int) = f(x,y)
+reduce((a,b) => a + b)(1, 2) // a and b's type are inferred
+reduce(_ + _)(1, 2)</code></pre>
+                </div>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala">val integer: Int = 1
+val integer = 1</code></pre>
+				<pre><code class="scala">def getData = { "hello world !" }
+def printHelloWorld = { println("hello world !") }
+val multiply = (x:Int, y:Int) => x * y</code></pre>
+                <pre class="customcode"><span class="line"><span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">list</span> =</span> <span class="hljs-type">List</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)</span>
+<span class="line">list.filter(<span style="color:#00CC33">int =&gt; int</span> &gt; <span style="color:#FF6600">1</span>)</span>
+<span class="line">list.filter(<span style="color:#00CC33">_</span> &gt; <span style="color:#FF6600">1</span>) <span class="hljs-comment">// returns List(2,3)</span></span></pre>
+                <pre class="customcode"><span class="line"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">reduce</span>(</span><span style="color:#00CC33">f: (<span class="hljs-type">Int</span>, <span class="hljs-type">Int</span>) =&gt; <span class="hljs-type">Int</span></span>)(<span style="color:#FF6600">x:<span class="hljs-type">Int</span>, y:<span class="hljs-type">Int</span></span>) = <span style="color:#00CC33">f(<span style="color:#FF6600">x,y</span>)</span></span>
+<span class="line">reduce(<span style="color:#00CC33">(a,b) =&gt; a + b</span>)(<span style="color:#FF6600">1, 2</span>) <span class="hljs-comment">// a and b's type are inferred</span></span>
+<span class="line">reduce(<span style="color:#00CC33">_ + _</span>)(<span style="color:#FF6600">1, 2</span>)</span></pre>
+            </section>
+        </section>
+
+        <section>
+            <h2>Error handling and prevention</h2>
+            <section data-transition="none none">
+                <div style="visibility: hidden">
+                    <pre><code class="scala">val foo: Option[String] = Option("ok") // returns Some("ok")
+val bar: Option[String] = Option(null) // returns None</code></pre>
+
+                    <pre><code class="scala">val foo: Try[String] = Try { /* exception */ } // returns Failure(ex)
+val bar: Try[String] = Try { "ok" } // returns Success("ok")</code></pre>
+
+				    <pre><code class="scala">val optionX = Option(42) // Some(42)
+optionX.filter(_ > 45) // None
+optionX.filter(_ > 40) // Some(42)</code></pre>
+
+				    <pre><code class="scala">val dangerousInt = Try(1/0) // Failure(java.lang.ArithmeticException)
+                    dangerousInt.map(_ + 42) // Failure(java.lang.ArithmeticException)</code></pre>
+
+
+				    <pre><code class="scala">dangerousInt.getOrElse(-1)
+                    dangerousInt.get // throws an exception if equal to None or Failure</code></pre>
+                </div>
+            </section>
+
+            <section data-transition="none none">
+                    <pre><code class="scala">val foo: Option[String] = Option("ok") // returns Some("ok")
+val bar: Option[String] = Option(null) // returns None</code></pre>
+
+                    <pre class="fragment"><code class="scala">val foo: Try[String] = Try { /* exception */ } // returns Failure(ex)
+val bar: Try[String] = Try { "ok" } // returns Success("ok")</code></pre>
+
+                <div style="visibility: hidden">
+				    <pre><code class="scala">val optionX = Option(42) // Some(42)
+                        optionX.filter(_ > 45) // None
+                        optionX.filter(_ > 40) // Some(42)</code></pre>
+
+				    <pre><code class="scala">val dangerousInt = Try(1/0) // Failure(java.lang.ArithmeticException)
+                        dangerousInt.map(_ + 42) // Failure(java.lang.ArithmeticException)</code></pre>
+
+
+				    <pre><code class="scala">dangerousInt.getOrElse(-1)
+                        dangerousInt.get // throws an exception if equal to None or Failure</code></pre>
+                </div>
+            </section>
+
+            <section data-transition="none none">
+                    <pre><code class="scala">val foo: Option[String] = Option("ok") // returns Some("ok")
+val bar: Option[String] = Option(null) // returns None</code></pre>
+
+                    <pre><code class="scala">val foo: Try[String] = Try { /* exception */ } // returns Failure(ex)
+val bar: Try[String] = Try { "ok" } // returns Success("ok")</code></pre>
+
+				    <pre><code class="scala">val optionX = Option(42)
+optionX.filter(_ > 45) // None
+optionX.filter(_ > 40) // Some(42)</code></pre>
+
+				    <pre class="fragment"><code class="scala">val dangerousInt = Try(1/0)
+dangerousInt.map(_ + 42) // Failure(java.lang.ArithmeticException)</code></pre>
+
+                <div style="visibility: hidden">
+				    <pre><code class="scala">dangerousInt.getOrElse(-1)
+                        dangerousInt.get // throws an exception if equal to None or Failure</code></pre>
+                </div>
+            </section>
+
+            <section data-transition="none none">
+                    <pre><code class="scala">val foo: Option[String] = Option("ok") // returns Some("ok")
+val bar: Option[String] = Option(null) // returns None</code></pre>
+
+                    <pre><code class="scala">val foo: Try[String] = Try { /* exception */ } // returns Failure(ex)
+val bar: Try[String] = Try { "ok" } // returns Success("ok")</code></pre>
+
+				    <pre><code class="scala">val optionX = Option(42)
+optionX.filter(_ > 45) // None
+optionX.filter(_ > 40) // Some(42)</code></pre>
+
+				    <pre><code class="scala">val dangerousInt = Try(1/0)
+dangerousInt.map(_ + 42) // Failure(java.lang.ArithmeticException)</code></pre>
+
+				    <pre><code class="scala">dangerousInt.getOrElse(-1) // Returns -1 if value cannot be found
+dangerousInt.get // throws an exception if equal to None or Failure</code></pre>
+            </section>
+            <section data-transition="none none">
+                    <pre><code class="scala">val foo: Option[String] = Option("ok") // returns Some("ok")
+val bar: Option[String] = Option(null) // returns None</code></pre>
+
+                    <pre><code class="scala">val foo: Try[String] = Try { /* exception */ } // returns Failure(ex)
+val bar: Try[String] = Try { "ok" } // returns Success("ok")</code></pre>
+
+				    <pre><code class="scala">val optionX = Option(42)
+optionX.filter(_ > 45) // None
+optionX.filter(_ > 40) // Some(42)</code></pre>
+
+				    <pre><code class="scala">val dangerousInt = Try(1/0)
+dangerousInt.map(_ + 42) // Failure(java.lang.ArithmeticException)</code></pre>
+
+				    <pre><code class="scala">dangerousInt.getOrElse(-1) // Returns -1 if value cannot be found
+dangerousInt.get // throws an exception if equal to None or Failure</code></pre>
+            </section>
+        </section>
+
+        <section>
+            <h2>Pattern Matching</h2>
+            <section>
+            </section>
+
+            <section data-transition="none none">
+                <pre class="customcode"><span style="color:#00CC33;margin-left:7px">e</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">pattern</span> <span style="color:#FF6600">[guard]</span> =&gt; case_block
+<span class="hljs-comment" style="margin-left:30px">/* more cases */</span>
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">_</span> =&gt; <span class="hljs-comment">// default case</span>
+<span style="margin-left:7px">}</span></pre>
+
+                <pre style="visibility: hidden;" class="customcode"><span class="hljs-keyword" style="margin-left:7px">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Foo</span>(</span>s: <span class="hljs-type">String</span>, i: <span class="hljs-type">Int</span>)<br/>
+<span style="color:#00CC33;margin-left:7px">Foo("Hello Confoo", 10)</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">Foo(_, i)</span> <span style="color:#FF6600">if integer &gt; 0</span> =&gt; print(<span class="hljs-string">"Foo with positive i"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">Foo(s, _)</span> =&gt; print(<span class="hljs-string">"Foo with non-positive i"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">_</span> =&gt; println(<span class="hljs-string">"foo is not a Foo"</span>)
+<span style="margin-left:7px">}</span></pre>
+
+                <pre style="visibility: hidden;" class="customcode"><span style="color:#00CC33;margin-left:7px">e</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">head :: tail</span> =&gt; println(<span class="hljs-string">"this is a list !"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">(x, y)</span> =&gt; println(s<span class="hljs-string">"this is a tuple with values $x and $y !"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF"><span class="hljs-type">Some</span>(value)</span> =&gt; println(s<span class="hljs-string">"this is an option containing $value"</span>)
+<span class="hljs-comment" style="margin-left:30px">/* ... */</span>
+<span style="margin-left:7px">}</span></pre>
+
+            </section>
+
+            <section data-transition="none none">
+                <pre class="customcode"><span style="color:#00CC33;margin-left:7px">e</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">pattern</span> <span style="color:#FF6600">[guard]</span> =&gt; case_block
+<span class="hljs-comment" style="margin-left:30px">/* more cases */</span>
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">_</span> =&gt; <span class="hljs-comment">// default case</span>
+<span style="margin-left:7px">}</span></pre>
+
+                <pre class="customcode"><span class="hljs-keyword" style="margin-left:7px">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Foo</span>(</span>s: <span class="hljs-type">String</span>, i: <span class="hljs-type">Int</span>)<br/>
+<span style="color:#00CC33;margin-left:7px">Foo("Hello Confoo", 10)</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">Foo(_, i)</span> <span style="color:#FF6600">if integer &gt; 0</span> =&gt; print(<span class="hljs-string">"Foo with positive i"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">Foo(s, _)</span> =&gt; print(<span class="hljs-string">"Foo with non-positive i"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">_</span> =&gt; println(<span class="hljs-string">"foo is not a Foo"</span>)
+<span style="margin-left:7px">}</span></pre>
+
+                <pre style="visibility: hidden;" class="customcode"><span style="color:#00CC33;margin-left:7px">e</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">head :: tail</span> =&gt; println(<span class="hljs-string">"this is a list !"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">(x, y)</span> =&gt; println(s<span class="hljs-string">"this is a tuple with values $x and $y !"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF"><span class="hljs-type">Some</span>(value)</span> =&gt; println(s<span class="hljs-string">"this is an option containing $value"</span>)
+<span class="hljs-comment" style="margin-left:30px">/* ... */</span>
+<span style="margin-left:7px">}</span></pre>
+
+            </section>
+
+            <section data-transition="none none">
+                <pre class="customcode"><span style="color:#00CC33;margin-left:7px">e</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">pattern</span> <span style="color:#FF6600">[guard]</span> =&gt; case_block
+<span class="hljs-comment" style="margin-left:30px">/* more cases */</span>
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">_</span> =&gt; <span class="hljs-comment">// default case</span>
+<span style="margin-left:7px">}</span></pre>
+
+                <pre class="customcode"><span class="hljs-keyword" style="margin-left:7px">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Foo</span>(</span>s: <span class="hljs-type">String</span>, i: <span class="hljs-type">Int</span>)<br/>
+<span style="color:#00CC33;margin-left:7px">Foo("Hello Confoo", 10)</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">Foo(_, i)</span> <span style="color:#FF6600">if integer &gt; 0</span> =&gt; print(<span class="hljs-string">"Foo with positive i"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">Foo(s, _)</span> =&gt; print(<span class="hljs-string">"Foo with non-positive i"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">_</span> =&gt; println(<span class="hljs-string">"foo is not a Foo"</span>)
+<span style="margin-left:7px">}</span></pre>
+
+                <pre class="customcode"><span style="color:#00CC33;margin-left:7px">e</span> <span class="hljs-keyword">match</span> {
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">head :: tail</span> =&gt; println(<span class="hljs-string">"this is a list !"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF">(x, y)</span> =&gt; println(s<span class="hljs-string">"this is a tuple with values $x and $y !"</span>)
+<span class="hljs-keyword" style="margin-left:30px">case</span> <span style="color:#3399FF"><span class="hljs-type">Some</span>(value)</span> =&gt; println(s<span class="hljs-string">"this is an option containing $value"</span>)
+<span class="hljs-comment" style="margin-left:30px">/* ... */</span>
+<span style="margin-left:7px">}</span></pre>
+
+            </section>
+        </section>
+
+        <section>
+            Advanced features and Patterns.
+        </section>
+
+        <section>
+            <h2>Implicits</h2>
+
+            <section data-transition="none none">
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala">case class Foo(string: String)
+def bar()(implicit foo: Foo) = println(foo.string)</code></pre>
+
+    			<pre class="fragment"><code class="scala">implicit val implicitFoo = Foo("Hello Confoo")
+bar() // prints "Hello Confoo"</code></pre>
+
+			    <pre class="fragment"><code class="scala">object Foo { implicit val defaultFoo = Foo("Default message") }
+bar() // prints "Default message"</code></pre>
+
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala">// Type conversion
+case class Foo(s: String)
+implicit def fooToInt(foo:Foo): Int = foo.s.toInt
+val i: Int = Foo("42") // returns 42</code></pre>
+
+                <pre class="fragment"><code class="scala">// Class extension
+implicit case class RichInt(int: Int) {
+  def doSomething() = /*...*/
+}
+/*...*/
+42.doSomething()</code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala">package object v1 { implicit val v1Foo = Foo("Foo v1") }
+package object v2 { implicit val v2Foo = Foo("Foo v2") }
+// ...
+def run(v1IsEnabled:Boolean): Unit = {
+  if(v1IsEnabled) { import v1._; bar() }
+  else            { import v2._; bar() }
+}</code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre style="width:923px"><code class="scala">def compare[A](x: A, y: A)(implicit order: Ordering[A]) = order.compare(x, y)</code></pre>
+
+                <pre style="width:923px;visibility: hidden;"><code class="scala">def compare[A : Ordering](x: A, y: A) = implicitly[Ordering[A]].compare(x, y)</code></pre>
+
+                <pre style="width:923px;visibility: hidden;" class="customcode"><span class="hljs-comment" style="margin-left:7px">// Implicit evidence</span>
+<span class="hljs-keyword" style="margin-left:7px">trait</span><span class="hljs-title"> TraversableOnce</span>[+<span style="color:#FF6600">A</span>] {
+<span class="hljs-comment" style="margin-left:30px">// [A] must be a tuple in order to call this method</span>
+<span class="hljs-keyword" style="margin-left:30px">def</span><span class="hljs-title"> toMap</span>[<span style="color:#3399FF">T, U</span>](<span class="hljs-keyword">implicit</span> ev: <span style="color:#00CC33">&lt;:&lt;</span> [<span style="color:#FF6600">A</span>, <span style="color:#3399FF">(T, U)</span>]): immutable.Map[T, U]
+<span style="margin-left:7px">}</span></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre style="width:923px"><code class="scala">def compare[A](x: A, y: A)(implicit order: Ordering[A]) = order.compare(x, y)</code></pre>
+
+                <pre style="width:923px"><code class="scala">def compare[A : Ordering](x: A, y: A) = implicitly[Ordering[A]].compare(x, y)</code></pre>
+
+                <pre style="width:923px" class="customcode fragment"><span class="hljs-comment" style="margin-left:7px">// Implicit evidence</span>
+<span class="hljs-keyword" style="margin-left:7px">trait</span><span class="hljs-title"> TraversableOnce</span>[+<span style="color:#FF6600">A</span>] {
+<span class="hljs-comment" style="margin-left:30px">// [A] must be a tuple in order to call this method</span>
+<span class="hljs-keyword" style="margin-left:30px">def</span><span class="hljs-title"> toMap</span>[<span style="color:#3399FF">T, U</span>](<span class="hljs-keyword">implicit</span> ev: <span style="color:#00CC33">&lt;:&lt;</span> [<span style="color:#FF6600">A</span>, <span style="color:#3399FF">(T, U)</span>]): immutable.Map[T, U]
+<span style="margin-left:7px">}</span></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre style="width:923px"><code class="scala">def print[T](value: T): Unit</code></pre>
+
+                <pre class="fragment" style="width:923px"><code class="scala">def print[T](value: T): Unit = value match {
+  case s:String => println(s"This is a string %value")
+  case i:Int => println(s"This is an Int %value")
+  /*...*/
+}</code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre style="width:923px" class="fragment"><code class="scala">trait Printer[T] { def print(value: T): Unit }
+
+def print[T: Printer](value: T): Unit = implicitly[Printer[T]].print(value)</code></pre>
+
+                <pre style="width:923px;visibility: hidden"><code class="scala">object Printer {
+  implicit object StringPrinter extends Printer[String] {
+    def print(string: String): Unit = println(s"This is a string %string")
+  }
+
+  implicit object IntPrinter extends Printer[Int] {
+    def print(int: Int): Unit = println(s"This is an Int %int")
+  }
+  /*...*/
+}</code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre style="width:923px"><code class="scala">trait Printer[T] { def print(value: T): Unit }
+
+def print[T: Printer](value: T): Unit = implicitly[Printer[T]].print(value)</code></pre>
+
+                <pre style="width:923px"><code class="scala">object Printer {
+  implicit object StringPrinter extends Printer[String] {
+    def print(string: String): Unit = println(s"This is a string %string")
+  }
+
+  implicit object IntPrinter extends Printer[Int] {
+    def print(int: Int): Unit = println(s"This is an Int %int")
+  }
+  /*...*/
+}</code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <ul>
+                    <li>Boilerplate code reduction</li>
+                    <li>Transparent adapters and decorators</li>
+                    <li>New Behaviors Introduction (Type classes)</li>
+                </ul>
+            </section>
+        </section>
+
+        <section>
+            <h2>Stackable Trait Pattern</h2>
+            <section data-transition="none none">
+                <pre class="fragment"><code class="scala">class IntQueue(ints: List[Int] = List.empty) {
+  def push(int: Int) = new IntQueue(int :: ints)
+}</code></pre>
+
+                <pre class="fragment"><code class="scala">class PositiveIntQueue extends IntQueue {
+  override def push(int: Int) = if(int > 0) super.push(int) else this
+}</code></pre>
+
+                <pre style="visibility: hidden"><code class="scala">class DoubledIntQueue extends IntQueue {
+  override def push(int: Int) = super.push(int * 2)
+}</code></pre>
+            </section>
+
+            <section data-transition="none none">
+                <pre><code class="scala">class IntQueue(ints: List[Int] = List.empty) {
+  def push(int: Int) = new IntQueue(int :: ints)
+}</code></pre>
+
+                <pre><code class="scala">class PositiveIntQueue extends IntQueue {
+  override def push(int: Int) = if(int > 0) super.push(int) else this
+}</code></pre>
+
+                <pre><code class="scala">class DoubledIntQueue extends IntQueue {
+  override def push(int: Int) = super.push(int * 2)
+}</code></pre>
+            </section>
+            <section data-transition="none none">
+                <pre><code class="scala">trait Doubling extends IntQueue {
+  override def push(int: Int) = super.push(int * 2)
+}
+
+trait Incrementing extends IntQueue {
+  override def push(int: Int) = super.push(int + 1)
+}
+
+trait Filtering extends IntQueue {
+  override def push(int: Int) = if(int > 0) super.push(int) else this
+}</code></pre>
+
+                <pre class="fragment"><code class="scala">val queue = new IntQueue with Doubling with Incrementing with Filtering
+queue.push(1).push(2).push(0) // returns IntQueue(6, 4)</code></pre>
+
+                <pre class="fragment"><code class="scala">val queue = new IntQueue with Doubling with Filtering with Incrementing
+queue.push(1).push(2).push(0) // returns IntQueue(4, 6, 4)</code></pre>
+            </section>
+        </section>
+
+        <section data-transition="none none">
+            <h2>What's left ?</h2>
+            <ul>
+                <li>Scala's core : Projections, Variance, structural-types, higher-kinded types, lambda types, Cake-Pattern, Collections, Metaprogramming...</li>
+                <li>Concurrency : Future, Promises, Actors (Akka)</li>
+                <li>Functional Programming : Categories, Functors, Monads, lazy evaluation, Scalaz...</li>
+                <li>...</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Conclusion</h2>
+            <ul>
+                <li><span style="font-size: 30px;color: #FF6600;">Programming Scala : </span><span style="font-size: 25px">by Dean Wampler and Alex Payne</span> </li>
+                <li><span style="font-size: 30px;color: #00CC33;">Functionnal Programming in Scala : </span><span style="font-size: 25px; ">by Paul Chiusano and Rúnar Bjarnason</span> </li>
+                <li><span style="font-size: 30px;color: #FF6600;">Scala for the Impatient : </span><span style="font-size: 25px">by Cay Horstmann</span> </li>
+            </ul>
+        </section>
+
+        <section>
+            <table>
+                <tr>
+                    <td style="border-bottom: 0;width: 35%"><img style="vertical-align: text-top; margin: 18px 0; border: 0; height: 324px;background:none;box-shadow:none;" src="images/Francis-logo2.png" /></td>
+                    <td style="border-bottom: 0;">
+                        <span style="font-size: 50px">I am a Scala developer at 1Science, but also a mobile dev freelancer.</span>
+                        <span style="display: block; font-size: 39px; padding-top: 50px">francistoth@coding-hipster.com</span>
+                    </td>
+                </tr>
+                <tr><td colspan="2" style="font-size: 50px; text-align: center; font-weight: bold">
+                    Thank you ! Questions ?
+                    <span style="display: block; font-size: 23px;">http://www.coding-hipster.com/presentations.html</span>
+                </td>
+                </tr>
+            </table>
+        </section>
+    </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+
+    // Full list of configuration options available at:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+            {
+                src: 'lib/js/classList.js', condition: function () {
+                return !document.body.classList;
+            }
+            },
+            {
+                src: 'plugin/markdown/marked.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            }
+            },
+            {
+                src: 'plugin/markdown/markdown.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            }
+            },
+            {
+                src: 'plugin/highlight/highlight.js', async: true, condition: function () {
+                return !!document.querySelector('pre code');
+            }, callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+            },
+            {src: 'plugin/zoom-js/zoom.js', async: true},
+            {src: 'plugin/notes/notes.js', async: true}
+        ]
+    });
+
+</script>
+
+</body>
+</html>
