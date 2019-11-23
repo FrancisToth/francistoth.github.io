@@ -28,6 +28,7 @@ github_username:  francistoth
 
 # Build settings
 theme: jekyll-theme-hyde
+remote_theme: jekyll-theme-hyde
 plugins:
   - jekyll-feed
   - jekyll-paginate
