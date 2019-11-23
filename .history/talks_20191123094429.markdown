@@ -1,0 +1,13 @@
+---
+layout: page
+title: Talks
+permalink: /talks/
+---
+
+Some talks I gave either in meetups or conferences.
+
+[Microservices](20191120_microservices/index.html)
+
+http://francistoth.github.io/blog/presentations/intro_to_fp.html
+http://francistoth.github.io/blog/presentations/spark_101.html
+http://francistoth.github.io/blog/presentations/scala_101.html

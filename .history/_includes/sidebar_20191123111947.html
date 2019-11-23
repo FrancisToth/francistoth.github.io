@@ -1,0 +1,39 @@
+<div class="sidebar">
+    <div class="container sidebar-sticky">
+      <div class="sidebar-about">
+        <h1>
+          <a href="{{ "/" | relative_url }}">
+            {{ site.title | escape }}
+          </a>
+        </h1>
+        <p class="lead">{{ site.description }}</p>
+      </div>
+  
+      <nav class="sidebar-nav">
+        <a class="sidebar-nav-item{% if page.url == site.baseurl %} active{% endif %}" href="{{ "/" | relative_url }}">Home</a>
+  
+        {% comment %}
+          The code below dynamically generates a sidebar nav of pages with
+          `layout: page` in the front-matter. See readme for usage.
+        {% endcomment %}
+  
+        {% assign pages_list = site.pages %}
+        {% for node in pages_list %}
+          {% if node.title != null %}
+            {% if node.layout == "page" %}
+              <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ node.url }}">{{ node.title }}</a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+    </nav>
+    <a target="_blank" href="https://ca.linkedin.com/in/francistoth"><img style="min-width: 0%; margin-top:5px; margin-right:10px;" src="images/icon-linkedin.png" height="20" width="20"></a>
+    <a target="_blank" href="https://twitter.com/francistoth"><img style="min-width: 0%; margin-top:5px; margin-right:10px;" src="images/twitter.png" height="20" width="20"></a>
+    <a target="_blank" href="https://github.com/FrancisToth"><img style="min-width: 0%; margin-top:5px; margin-right:10px;" src="images/github-icon.png" height="20" width="20"></a>
+    <a target="_blank" href="https://careers.stackoverflow.com/francistoth"><img style="min-width: 0%; margin-top:5px; margin-right:10px;" src="images/stackoverflow.ico.png" height="20" width="20"></a>
+    <a target="_blank" onclick="mailto();"><img style="min-width: 0%; margin-top:5px; margin-right:10px;" src="images/email.png" height="20" width="20"></a>
+  
+      <p>&copy; {{ site.time | date: '%Y' }}. All rights reserved.</p>
+    </div>
+  </div>
+  

@@ -1,0 +1,71 @@
+---
+layout: page
+title: About
+permalink: /about/
+---
+
+
+div {
+  border: 3px solid #4CAF50;
+  padding: 5px;
+}
+
+.img1 {
+  float: right;
+}
+
+.clearfix {
+  overflow: auto;
+}
+
+.img2 {
+  float: right;
+}
+</style>
+</head>
+<body>
+
+<div class="overflow: auto;">
+  <img style="float: right;" src="images/avatar.jpg" alt="Pineapple" width="170" height="170">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum...
+</div>
+
+  <table>
+    <tr style="vertical-align: top;">
+      <td><img class="menu-maximized" style="padding-top:5px;" src="images/avatar.jpg" alt="Francis Toth" height="200" width="200">
+        <a target="_blank" href="https://ca.linkedin.com/in/francistoth"><img class="contact_ico" src="images/icon-linkedin.png" height="20" width="20"></a>
+        <a target="_blank" href="https://twitter.com/francistoth"><img class="contact_ico" src="images/twitter.png" height="20" width="20"></a>
+        <a target="_blank" href="https://github.com/FrancisToth"><img class="contact_ico" src="images/github-icon.png" height="20" width="20"></a>
+        <a target="_blank" href="https://careers.stackoverflow.com/francistoth"><img class="contact_ico" src="images/stackoverflow.ico.png" height="20" width="20"></a>
+        <a target="_blank" onclick="mailto();"><img class="contact_ico" src="images/email.png" height="20" width="20"></a>
+      </td>
+      <td><p>I am a software developer, convinced agilist, living in Montreal with 10 years experience
+        developing web/mobile apps, and optimizing work processes. My current passion are learning
+        new languages and contributing to build highly scalable applications. I am highly skilled
+        in Object Oriented Programming, but am also quiet familiar with Reactive and Functional paradigm.
+        <br/><br/>
+        I also give <a href="presentations.html">presentations</a> from time to time, play the guitar, love music, and like to try new beers.
+        <br/><br/>
+        Scala<span class="star">(++)</span>
+        Spark<span class="star">(++)</span>
+        Akka<span class="star">(+)</span>
+        Java<span class="star">(+++)</span>
+        Ruby<span class="star">(++)</span>
+        Objective-C<span class="star">(++)</span>
+        OOP<span class="star">(+++)</span>
+        Functional Programming<span class="star">(+)</span>
+        Reactive Programming<span class="star">(++)</span>
+        SQL<span class="star">(++)</span>
+        Merise<span class="star">(+++)</span>
+        Android<span class="star">(++)</span>
+        Gradle<span class="star">(++)</span>
+        AWS<span class="star">(+)</span>
+        Git<span class="star">(++)</span>
+        JEE<span class="star">(++)</span>
+        BUCK<span class="star">(++)</span>
+        Scrum<span class="star">(+++)</span>
+        XP<span class="star">(+)</span>
+        TDD<span class="star">(++)</span>
+      </p></td>
+    </tr>
+  </table>

@@ -1,0 +1,32 @@
+---
+layout: page
+title: About
+permalink: /about/
+---
+
+<div class="overflow: auto;">
+  <img style="float: left;margin-right:40px;" src="/images/avatar.jpg" width="200" height="200">
+  <p style="text-align:justify; text-justify: inter-word;">I am a software developer, convinced agilist, living in Montreal with 10 years experience developing web/mobile apps, and optimizing work processes. My current passion are learning new languages and contributing to build highly scalable applications. I am highly skilled in Object Oriented Programming, but am also quiet familiar with Reactive and Functional paradigm.<><></p>
+  <p style="text-align:justify; text-justify: inter-word;"> I also give <a href="presentations.html">presentations</a> from time to time, play the guitar, love music, and like to try new beers.</p>
+  <br/><br/>
+  Scala<span class="star">(++)</span>
+  Spark<span class="star">(++)</span>
+  Akka<span class="star">(+)</span>
+  Java<span class="star">(+++)</span>
+  Ruby<span class="star">(++)</span>
+  Objective-C<span class="star">(++)</span>
+  OOP<span class="star">(+++)</span>
+  Functional Programming<span class="star">(+)</span>
+  Reactive Programming<span class="star">(++)</span>
+  SQL<span class="star">(++)</span>
+  Merise<span class="star">(+++)</span>
+  Android<span class="star">(++)</span>
+  Gradle<span class="star">(++)</span>
+  AWS<span class="star">(+)</span>
+  Git<span class="star">(++)</span>
+  JEE<span class="star">(++)</span>
+  BUCK<span class="star">(++)</span>
+  Scrum<span class="star">(+++)</span>
+  XP<span class="star">(+)</span>
+  TDD<span class="star">(++)</span>
+</div>

@@ -1,0 +1,10 @@
+---
+layout: page
+title: Talks
+permalink: /talks/
+---
+
+<div class="post">
+  <span class="post-date">{{ page.date | date_to_string }}</span>
+  {{ content }}
+</div>

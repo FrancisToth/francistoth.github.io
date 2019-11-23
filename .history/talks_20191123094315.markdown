@@ -1,0 +1,9 @@
+---
+layout: page
+title: Talks
+permalink: /talks/
+---
+
+This section's content is being re-designed and more talks will be submitted soonSome talks I gave either in meetups or conferences.
+
+[Microservices](20191120_microservices/index.html)

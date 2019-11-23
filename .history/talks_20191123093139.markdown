@@ -1,0 +1,7 @@
+---
+layout: page
+title: Talks
+permalink: /talks/
+---
+
+[Microservices](talks/20191120_microservices/index.html)

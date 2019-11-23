@@ -1,0 +1,17 @@
+---
+layout: page
+title: Talks
+permalink: /talks/
+---
+
+Some talks I gave either in meetups or conferences.
+
+[Microservices](20191120_microservices/index.html)
+
+[Introduction to Functional Programming](http://francistoth.github.io/blog/presentations/intro_to_fp.html)
+[Spark 101](http://francistoth.github.io/blog/presentations/spark_101.html)
+[Scala 101]http://francistoth.github.io/blog/presentations/scala_101.html
+http://slides.com/tothfrancis/introduction-to-buck/fullscreen#/
+https://prezi.com/jfruyhemc9uh/android-montreal-best-practices-modularity/
+https://prezi.com/f2vue-ba2ybp/confoo-2013-android-best-practices/
+https://prezi.com/-m4rprzvgs1p/confoo-2012-testing-android-apps/

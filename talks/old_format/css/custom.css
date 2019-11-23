@@ -1,0 +1,322 @@
+pre.customcode {
+  padding: 5px 0 5px 0;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  line-height: 1.2em;
+  background: #3f3f3f none repeat scroll 0% 0%;
+}
+
+pre.customcode .line {
+  margin-left: 7px;
+}
+
+div .switch {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+}
+
+div .green-border {
+  border: 2px solid #a7d196;
+}
+
+/* ############################################# */
+
+.reveal .slides section .fragment.border {
+  opacity: 1;
+  visibility: visible;
+  border: 3px solid transparent;
+}
+.reveal .slides section .fragment.border.visible          { border: 3px solid #a7d196; }
+.reveal .slides section .fragment.border.current-fragment { border: 3px solid #a7d196; }
+
+.reveal .slides section .fragment.background {
+  opacity: 1;
+  visibility: visible;
+}
+.reveal .slides section .fragment.background.green.visible          { background-color: green; }
+.reveal .slides section .fragment.background.green.current-fragment { background-color: green; }
+
+.reveal .slides section .fragment.highlight-light-blue          { opacity: 1; visibility: visible;}
+.reveal .slides section .fragment.highlight-light-blue.visible                  { color: #6db3ff; }
+.reveal .slides section .fragment.highlight-current-light-blue.current-fragment { color: #F4A452; }
+
+.reveal .slides section .fragment.cover {
+  opacity: 1;
+  visibility: visible;
+  background-color: #243044;
+}
+.reveal .slides section .fragment.cover.visible { opacity: 0; }
+.reveal .slides section .fragment.cover.current-fragment { opacity: 0; }
+
+
+.reveal .slides section .fragment.flip                  { opacity: 1; visibility: visible; display: block; }
+.reveal .slides section .fragment.flip.visible          { opacity: 0; display: none; }
+.reveal .slides section .fragment.flip.current-fragment { opacity: 0; display: none; }
+
+.reveal .slides section .fragment.unflip                  { opacity: 0; visibility: visible; display: none; }
+.reveal .slides section .fragment.unflip.visible          { opacity: 1; display: block; }
+.reveal .slides section .fragment.unflip.current-fragment { opacity: 1; display: block; }
+
+
+.reveal .slides section .fragment.highlight-border-blue {
+  opacity: 1;
+  visibility: visible;
+  border: 3px solid white;
+}
+
+.reveal .slides section .fragment.highlight-border-blue.visible {
+  border-color: #6db3ff;
+  background-color: #F4A452;
+  color: #F4A452;
+}
+
+.reveal .slides section .fragment.highlight-border-light-blue.current-fragment {
+  border-color: red;
+}
+
+/* ############################################# */
+
+div.executor > div.title > span {
+    background-color: #243044
+}
+
+div.executor > div.body {
+    border: 3px solid #5C97D6;
+    padding: 10px;
+    position: relative;
+    top:-20px;
+    z-index: -1;
+}
+
+div.executor > div.body > div.partition-list {
+    border: 1px solid white;
+    line-height: 30px;
+    margin-top:10px;
+    padding: 5px;
+}
+
+div.executor > div.body > div.partition-list > div.block {
+    display:inline-block;
+    height:30px;
+    width:30px;
+}
+
+div .sparkTask {
+    border:1px solid #F4A452;
+    background-color: #243044;
+    width:70px;
+    height:80px;
+    margin: 10px 0 0 10px;
+}
+
+div .sparkTask.mainTask {
+    vertical-align:middle;
+    margin: 0 0 0 10px;
+    display:inline-block
+}
+
+/* PARTITIONING ################################ */
+
+div .partitioning-title {
+  display:inline-block;
+  padding: 0 10px 0 0;
+  vertical-align:top;
+  text-align:left;
+  font-size:34px;
+  width:21%;
+}
+
+div .partitioning-pros {
+  display:inline-block;
+  padding-left: 10px;
+  vertical-align: top;
+  text-align:left;
+  width:45%;
+}
+
+div .partition-block {
+  display:inline-block;
+  width: 20px;
+}
+
+div .partition-block-set {
+  border: 1px solid white;
+  font-size: 20px;
+  padding:10px
+}
+
+.light-green { background-color: #17ff2e }
+.green { background-color: green; }
+.red { background-color: red; }
+.yellow { background-color: yellow; }
+.blue { background-color: #6db3ff; }
+.purple { background-color: #b04eb2; }
+
+div.blue-border { border: 3px solid #6db3ff; }
+div.orange-border { border: 3px solid #F4A452; }
+
+
+div .partitionx {
+  border: 1px solid white;
+  height:39px;
+  padding:5px;
+  width:64px;
+  font-size: 25px;
+}
+
+div .partitionx span {
+  vertical-align: middle;
+}
+
+/* ############################################# */
+
+.hidden { visibility:hidden; }
+div.hidden { background-color: #243044; }
+
+div .arrow {
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-left: 14px solid white;
+  border-bottom: 15px solid transparent;
+  margin-left: 15px;
+}
+div .arrow:before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 13px;
+  background: white;
+  left: 0;
+  top: 8.7px;
+}
+
+div .arrow.orange { border-left-color:#F4A452; }
+div .arrow.orange:before { background: #F4A452; }
+
+div .arrow.small {
+  border-top: 8px solid transparent;
+  border-left: 7px solid white;
+  border-bottom: 8px solid transparent;
+}
+div .arrow.small:before {
+  width: 7px;
+  height: 5px;
+  left: 8px;
+  top: 5px;
+}
+
+.up {
+  display: inline-block;
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+}
+.up-r {
+  display: inline-block;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+.up-l {
+  display: inline-block;
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+.down {
+  display: inline-block;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+}
+.down-l {
+  display: inline-block;
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+.down-r {
+  display: inline-block;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+.left {
+  display: inline-block;
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+}
+.right {
+  display: inline-block;
+  transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+}
+
+/* ############################################# */
+
+div .cylinder {
+	position: relative;
+	overflow: hidden;
+	margin: 0 auto;
+	width: 100px;
+	height: 120px;
+	border-radius: 50px/25px;
+	border:3px solid white;
+	background-color: #243044;
+}
+
+div .cylinder:before {
+	position: absolute;
+	left: -3px;
+	top: -5px;
+	width: 100px;
+	height: 50px;
+	border-radius: 50px/25px;
+	border: 3px solid white;
+	background-color: transparent;
+	content: '';
+}
+
+div .cylinder:after {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100px;
+	height: 50px;
+	border-radius: 50px/25px;
+	background-color: transparent;
+	content: '';
+}
+
+div.line { border: 3px solid white; }
+div.line.horizontal {
+    height:20px;
+    border-top-width: 0;
+}
+div.line.vertical {
+    width:20px;
+    height:100%;
+    border-left-width: 0;
+}
+
+
+div.rectangle, div.child {
+    /*border:1px solid #F4A452;*/
+    background-color: #243044;
+    width:70px;
+    height:80px;
+}
+
+div.child { margin: 10px 0 0 10px; }
+div.rectangle.small, div.child.small { width:50px; height: 55px; }
+
+div.box {
+    border:0px solid white;
+    padding: 5px;
+    height:30px;
+    width: 30px;
+    margin: 10px auto 10px auto;
+}
+
+div.vertical-box-set {
+    border:1px solid white;
+    width: 45px;
+    padding: 10px;
+}
