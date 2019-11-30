@@ -33,7 +33,7 @@ case class BarInt(value: Int)                     extends Foo[Int]
 case class BarMap[A, B](value: Foo[B], f: B => A) extends Foo[A]
 ```
 
-The particularity of `BarMap[A, B]` is that the moment we upcast a value of that type, we loose information about `B`:
+The particularity of `BarMap[A, B]` is that the moment we upcast a value of that type, we lose information about `B`:
 ```scala
 val foo: Foo[Int]    = BarInt(42)
 // `B` is not present in `mapFoo`'s definition
