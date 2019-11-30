@@ -1,0 +1,73 @@
+---
+layout: post
+title:  "GADTS in a nutshel"
+date:   2019-11-30 08:02:48 -0500
+brief: 
+---
+
+I recently attended a training provided by John De Goes about Generalized Algebraic Data Types (GADTs) and wanted to make a quick recap of what those are.
+
+An Algebraic Data Type (ADT) is a sum type built from a collection of sum/product types:
+```
+sealed trait Foo
+case class Bar() extends Foo
+```
+
+In order to make this ADT polymorphic, we have to introduce type parameters in some of the terms of the ADT:
+```
+sealed trait Foo[A]
+case class Bar[A](value: A) extends Foo[A]
+```
+
+GADTs are built on top of polymorphic ADTs and can be created either by specializing at least one of the terms:
+```
+sealed trait Foo[A]
+case class Bar[A](value: A)   extends Foo[A]
+case class BarInt(value: Int) extends Foo[Int]
+```
+or by introducing a type parameter not present in the main sum type, that is an existential type:
+```
+sealed trait Foo[A]
+case class Bar[A](value: A)                       extends Foo[A]
+case class BarInt(value: Int)                     extends Foo[Int]
+case class BarMap[A, B](value: Foo[B], f: B => A) extends Foo[A]
+```
+
+The particularity of `BarMap[A, B]` is that the moment we upcast a value of that type, we loose information about `B`:
+```
+val foo: Foo[Int]    = BarInt(42)
+val mapFoo: Foo[Int] = BarMap(foo, (_: Int) + 1) // `B` is not present in `mapFoo`'s definition
+
+mapFoo match {
+  //...
+  // we cannot know what f precisely is
+  case BarMap(v, f) => ???
+}
+```
+
+However, we can use a type case statement and give a name to `B` to work around this:
+```
+mapFoo match {
+  //...
+  case map: BarMap[A, b] => ???
+}
+```
+
+We now know `map` is of type `BarMap[Int, b](value: Foo[b], f: b => A)`:
+```
+val foo: Foo[Int]    = BarInt(42)
+val mapFoo: Foo[Int] = BarMap(foo, (_: Int) + 1)
+
+def run[A](f: Foo[A]): A = f match {
+    case Bar(value)        => value                 // `a` is of type `A`
+    case BarInt(i)         => i                     // `i` is an `Int`
+    case map: BarMap[A, b] => 
+        val f: b => A = map.f
+        val v: Foo[b] = map.value
+        f(run(v)) // returns an `A`
+  }
+
+val fooInt: Foo[Int] = BarInt(42)
+val result: Int = run(fooInt)
+```
+So GADTs allow us to carry information about the type used in the definition of an expression, and therefore introduce a weak form on pattern matching on types.
