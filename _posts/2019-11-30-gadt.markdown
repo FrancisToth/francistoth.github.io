@@ -8,25 +8,25 @@ brief:
 I recently attended a training provided by John De Goes about Generalized Algebraic Data Types (GADTs) and wanted to make a quick recap of what those are.
 
 An Algebraic Data Type (ADT) is a sum type built from a collection of sum/product types:
-```
+```scala
 sealed trait Foo
 case class Bar() extends Foo
 ```
 
 In order to make this ADT polymorphic, we have to introduce type parameters in some of the terms of the ADT:
-```
+```scala
 sealed trait Foo[A]
 case class Bar[A](value: A) extends Foo[A]
 ```
 
 GADTs are built on top of polymorphic ADTs and can be created either by specializing at least one of the terms:
-```
+```scala
 sealed trait Foo[A]
 case class Bar[A](value: A)   extends Foo[A]
 case class BarInt(value: Int) extends Foo[Int]
 ```
 or by introducing a type parameter not present in the main sum type, that is an existential type:
-```
+```scala
 sealed trait Foo[A]
 case class Bar[A](value: A)                       extends Foo[A]
 case class BarInt(value: Int)                     extends Foo[Int]
@@ -34,7 +34,7 @@ case class BarMap[A, B](value: Foo[B], f: B => A) extends Foo[A]
 ```
 
 The particularity of `BarMap[A, B]` is that the moment we upcast a value of that type, we loose information about `B`:
-```
+```scala
 val foo: Foo[Int]    = BarInt(42)
 val mapFoo: Foo[Int] = BarMap(foo, (_: Int) + 1) // `B` is not present in `mapFoo`'s definition
 
@@ -46,7 +46,7 @@ mapFoo match {
 ```
 
 However, we can use a type case statement and give a name to `B` to work around this:
-```
+```scala
 mapFoo match {
   //...
   case map: BarMap[A, b] => ???
@@ -54,7 +54,7 @@ mapFoo match {
 ```
 
 We now know `map` is of type `BarMap[Int, b](value: Foo[b], f: b => A)`:
-```
+```scala
 val foo: Foo[Int]    = BarInt(42)
 val mapFoo: Foo[Int] = BarMap(foo, (_: Int) + 1)
 
