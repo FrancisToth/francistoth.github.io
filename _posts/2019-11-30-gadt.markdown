@@ -56,7 +56,7 @@ mapFoo match {
 
 We now know `map` is of type `BarMap[Int, b]` with `value: Foo[b]` and `f: b => A)`:
 ```scala
-val foo: Foo[Int]    = BarInt(42)
+val foo   : Foo[Int] = BarInt(42)
 val mapFoo: Foo[Int] = BarMap(foo, (_: Int) + 1)
 
 def run[A](f: Foo[A]): A = f match {
