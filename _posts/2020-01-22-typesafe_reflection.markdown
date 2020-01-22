@@ -9,7 +9,8 @@ Following the [previous post](/2019/11/30/gadt.html), here is a nice technique t
 
 As you may know, Scala provides us with Phantom types. A Phantom type is parameterized type which the only purpose is to provide type-safety and which is erased at runtime:
 ```scala
-/* A is only present as a type parameter but is not used anywhere else in the structure definition */
+/* A is only present as a type parameter but is not used 
+  anywhere else in the structure definition */
 case class Foo[A](name: String)
 ```
 This can be used to tag a type with some additional metadata used by the compiler to ensure type-safety:
