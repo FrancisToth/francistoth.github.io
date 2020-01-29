@@ -53,7 +53,10 @@ case class Selection[A](family: Family, member: Member[???])
 ```
 Ideally, we would like to provide the `Member` type constructor with the `Tag` of the `Family` passed in argument:
 ```scala
-case class Selection[A](family: Family, member: Member[family.Tag]) // does not compile
+case class Selection[A](
+  family: Family, 
+  member: Member[family.Tag]
+) // does not compile
 ```
 This approach, unfortunately, does not work but there is a workaround known as the `Aux` pattern. One way to think about this pattern is to see `Aux` as a getter for some type information encapsulated in the `Family` type. 
 ```scala
