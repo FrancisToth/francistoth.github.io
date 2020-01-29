@@ -1,0 +1,82 @@
+---
+layout: post
+title:  "Aux pattern"
+date:   2020-01-29 08:02:48 -0500
+brief: 
+---
+
+In this post, we will cover a well-known technique covered in a [Spartan](https://www.patreon.com/jdegoes) session by John Degoes. The problem we would like to solve is pretty simple. Given a `Member` and a `Family`, we would like to make sure a `Selection` is valid at compile-time. A `Selection` is valid only if the `Member` provided belongs to the `Family` passed in parameter.
+```scala
+case class Member(name: String)
+sealed trait Family
+
+case class Selection(family: Family, member: Member)
+```
+A first approach consists in providing a type parameter:
+```scala
+case class Member[A](name: String)
+sealed trait Family[A]
+
+case class Selection[A](family: Family[A], member: Member[A])
+```
+This would work to a certain extent but the compiler could still be cheated by providing a `Member` having the same type than a `Family` while not belonging to it:
+```scala
+trait SomeType
+
+val lennon: Family[SomeType] = new Family[SomeType] {}
+val mccartney: Family[SomeType] = new Family[SomeType] {}
+
+val john = Member[SomeType]("John")
+val paul = Member[SomeType]("Paul")
+
+Selection(lennon, john) // compiles
+Selection(lennon, paul) // compiles
+```
+This tells us that a `Family`'s type should not be exposed. Let's use a type member to hide this information:
+```scala
+case class Member[A](name: String)
+
+sealed trait Family {
+  type Tag
+}
+object Family {
+  def mk: Family = new Family {}
+}
+```
+`Tag` is a type member and therefore unique to each `Family` instance. Secondly, as `Family` is sealed, it cannot be instantiated from outside the file where it is defined, hence the smart constructor `Family.mk`. This prevents a user from defining a `Tag` that could be used for more than one `Family`.
+
+Notice also that a value for `Tag` does not need to be provided when instantiating a `Family`. We are not done however, as the question is now how to ensure the selection is valid:
+```scala
+case class Selection[A](family: Family, member: Member[???])
+```
+Ideally, we would like to provide the `Member` type constructor with the `Tag` of the `Family` passed in argument:
+```scala
+case class Selection[A](family: Family, member: Member[family.Tag]) // does not compile
+```
+This approach, unfortunately, does not work but there is a workaround known as the `Aux` pattern. One way to think about this pattern is to see `Aux` as a getter for some type information encapsulated in the `Family` type. 
+```scala
+case class Member[A](name: String)
+
+sealed trait Family {
+  type Tag
+}
+object Family {
+  type Aux[A] = Family { type Tag = A }
+  def mk: Family = new Family {}
+}
+
+case class Selection[A](family: Family.Aux[A], member: Member[A])
+```
+This now guarantees that `Family#Tag` is equal to `A`:
+```scala
+val (f1, f2) = (Family.mk, Family.mk)
+
+val john = Member[f1.Tag]("John")
+val paul = Member[f2.Tag]("Paul")
+
+Selection(f1, john) // compiles
+Selection(f1, paul) // does not compile
+```
+The `Aux` pattern is a great tool whenever you want to add type constraints while not exposing some internal aspects of DSL. In a future post, we will cover a concrete use case relying on it.
+
+Thanks to [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for their help writting this post.
