@@ -5,9 +5,9 @@ date:   2020-01-29 08:02:48 -0500
 brief: 
 ---
 
-In this post, we will cover a well-known technique covered in a [Spartan](https://www.patreon.com/jdegoes) session by John Degoes. 
+In this post, we will demonstrate a technique called type refinement (Aux pattern) that was covered in a [Spartan](https://www.patreon.com/jdegoes) session by John De Goes.
 
-The problem we would like to solve is pretty simple. Given a `Member` and a `Family`, we would like to make sure a `Selection` is valid at compile-time. A `Selection` is valid only if the `Member` provided belongs to the `Family` passed in parameter.
+ We would like to solve the following problem: Given a `Member` and a `Family`, we would like to make sure a `Selection` is valid at compile-time. A `Selection` is valid only if the `Member` provided belongs to the `Family` passed in parameter.
 ```scala
 case class Member(name: String)
 sealed trait Family
