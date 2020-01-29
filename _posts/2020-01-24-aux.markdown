@@ -81,4 +81,4 @@ Selection(f1, paul) // does not compile
 ```
 The `Aux` pattern is a great tool whenever you want to add type constraints while not exposing some internal aspects of DSL. In a future post, we will cover a concrete use case relying on it.
 
-Thanks to [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for their help writting this post.
+Thanks to [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for their help writing this post.
