@@ -21,7 +21,7 @@ error: type mismatch;
  found   : A
  required: B
 ```
-`B` can be used wherever an `A` is expected but not the other way around. This is because `B` provides as much capabilities/guarantees than `A` but not vice-versa. We therefore say that `B` is a subtype of `A`. The question asked by variance is therefore whether or not this property is held when `A` and `B` are used to define more complex types (eg. `List[A]`, `A => B`, ...).
+`B` can be used wherever an `A` is expected but not the other way around. This is because `B` provides as much capabilities/guarantees as `A` but not vice-versa. We therefore say that `B` is a subtype of `A`. The question asked by variance is therefore whether or not this property is held when `A` and `B` are used to define more complex types (eg. `List[A]`, `A => B`, ...).
 
 ## Variance 101
 
@@ -155,7 +155,7 @@ trait Foo[-T] {
 
 ## Variance flipping
 
-As if variance was not enough complicated, a type's variance can also flip depending on the context.
+As if variance was not complicated enough, a type's variance can also flip depending on the context.
 ```scala
 trait Foo[-A] {
   def foo(fa: Foo[A]): Unit
