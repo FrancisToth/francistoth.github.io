@@ -1,0 +1,204 @@
+---
+layout: post
+title:  "About Variance"
+date:   2020-02-12 08:02:48 -0500
+brief: 
+---
+
+Variance is a topic that may be pretty confusing at first and wich results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type `A` and its subtype `B`, can one be safely substituted for the other without affecting the program correctness? John De Goes made recently two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these.
+
+## Subtype 101
+
+When talking about Variance, it's important to understand the meaning of the word _subtype_. Too often, we think about subtyping in terms of inheritance. In other words, if `B` inherits from `A` then `B` is a subtype of `A`. Subtyping is actually more about how compatible two types are. As described by the [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle), a type `B` is a subtype of `A`, if `B` can be used when `A` is expected without affecting the program's correctness.
+```scala
+class A
+class B extends A
+
+val a: A = new B
+val b: B = new A
+           ^
+error: type mismatch;
+ found   : A
+ required: B
+```
+`B` can be used wherever an `A` is expected but not the other way around. This is because `B` provides as much capabilities/guarantees than `A` but not vice-versa. We therefore say that `B` is a subtype of `A`. The question asked by variance is therefore whether or not this property is held when `A` and `B` are used to define more complex types (eg. `List[A]`, `A => B`, ...).
+
+## Variance 101
+
+There are overall three types of variance:
+- **invariance**    : `A >: B` does not imply that `Foo[A] >: Foo[B]`
+- **covariance**    : `A >: B` implies that `Foo[A] >: Foo[B]`
+- **contravariance**: `A >: B` implies that `Foo[A] <: Foo[B]`
+
+In Scala, we use the `+` sign to mark a type as **covariant**, the `-` to mark it as **contravariant** and no sign to mark it as **invariant**. Concretely:
+```scala
+// A :> B does not imply F[A] :> F[B] nor F[A] <: F[B]
+class Invariant[T]
+val ia: Invariant[A] = new Invariant[A]
+val ib: Invariant[B] = ia // ERROR
+
+// A :> B implies F[A] :> F[B]
+trait Covariant[+T]
+val covb: Covariant[B] = new Covariant[B]
+val covb: Covariant[A] = covb // OK
+
+// A :> B implies F[A] <: F[B]
+trait Contravariant[-T]
+val cona: Contravariant[A] = new Contravariant[A]
+val conb: Contravariant[B] = cona // OK
+```
+
+## Substitution rule
+
+One good way to think about variance is to look at the substitution process this way:
+```scala
+val fl: Foo[L] = new Foo[R] // the `=` stands for "can be substituted by"
+```
+- **invariance**: does not allow any substitution so `R` must equal `L` (`L =:= R`)
+- **covariance**: allows substitution only if `R` is **more** specialized (+) than `L` (`L :> R`)
+- **contravariance** allows substitution only if `R` is **less** specialized (-) than `L` (`L <: R`)
+
+In other words, the general substitution rule is as follow:
+- when types are **covariant**, `L` has to be a **supertype** of `R`
+- when types are **contravariant**, `L` has to be a **subtype** of `R`.
+
+## Variance and functions
+
+When it comes to variance, functions are a pretty interesting case. As you may know, functions in Scala are defined using particular traits such as the one below:
+```scala
+trait Function1[-T, +R] {
+  def apply(t: T): R
+}
+```
+A function is therefore **contravariant in its arguments** and **covariant in its result**:
+```scala
+val f1: Function1[L1, R0] = new Function1[L0, R1] { /* ... */ }
+```
+If we apply the general substitution rule mentioned earlier, we conclude that `L1 <: L0` and `R0 >: R1`. In other words, the function on the left has to:
+- take a **more** specialized type as an argument (**contravariance**)
+- and/or return a **less** specialized type (**covariance**)
+
+`L0 => R1` is therefore a subtype of `L1 => R0`.
+
+## Variance position
+
+Once you start introducing variance, you necessarily end up with conflicts and pretty confusing error messages. The main rule here is that once a type has been marked as covariant or contravariant, it cannot be used in a position requiring the opposite variance:
+```scala
+trait Foo[+T] {
+  // functions are contravariant in their argument
+  def foo(t: T): Unit
+  // error: covariant type T occurs in contravariant 
+  // position in type T of value t
+}
+
+trait Bar[-U] {
+  // functions are covariant in their result
+  def bar(): U
+  // error contravariant type T occurs in covariant 
+  // position in type (t: T)T of method bar
+}
+```
+The compiler prevents us from doing this in order to enforce subtyping rules and guarantee correctness at runtime. In some cases, we may still however need to use a type parameter at different positions. This can be done but under some restrictions.
+
+In the first case, `T` is covariant and cannot be used as a function argument. We can however use an appropriate substitute for `foo` that satifies the requirements for contravariance. Remember that _when types are **covariant** `L` has to be a **supertype** of `R`_. 
+```scala
+val fl: Function1[L, Unit] = new Function1[R, Unit]
+```
+So a valid substitute for `foo` would be `T1 => Unit` with `T1 >: T`. This gives us:
+```scala
+trait Foo[+T] {
+  def foo[T1 >: T](t: T1): Unit
+}
+```
+Similarly in the second case, `T` is contravariant and cannot be used as a function result. In order to satisfy the requirements for covariance, we need to remember that _when types are **contravariant**, `L` has to be a **subtype** of `R`_
+```scala
+val fl: Function1[L, Unit] = new Function1[R, Unit]
+```
+So a valid substitute for `foo` would be `T0 => Unit` with `T0 <: T`. This gives us:
+```scala
+trait Foo[-T] {
+  def foo[T0 <: T](t: T0): Unit
+}
+```
+
+To convince yourself, let's think about what you would be allowed to do if variance errors would not be caught at compile time:
+```scala
+class A
+class B0 extends A
+class B1 extends A
+
+trait Foo[+T] {
+  // Assume this compiles
+  def foo(t: T): Unit
+}
+
+val fb0: Foo[B0] = new Foo[B0] { def foo(b0: B0): Unit = ??? }
+// Because `Foo[_]` is covariant in `T`
+val fba: Foo[A] = fb0
+
+// This will crash the program at runtime
+// as `fba` can only accept `B0`s
+fba.foo(new B1)
+
+trait Bar[-U] {
+  // Assume this compiles
+  def bar(): U
+}
+
+val ba:  Bar[A] = new Bar[A] { def bar(): A = new B0 }
+// Because `Bar[_]` is contravariant in `U`
+val bb1: Bar[B1] = ba
+
+// This will crash the program at runtime
+// as `bb1` can only produce `B1`s
+val b1: B1 = ba.bar()
+```
+
+## Variance flipping
+
+As if variance was not enough complicated, you would probably surprised that a type's variance can also flip depending on the context.
+```scala
+trait Foo[-A] {
+  def foo(fa: Foo[A]): Unit
+  /* contravariant type A occurs in covariant 
+     position in type Foo[A] of value fa */
+}
+```
+Despite `fa` being a function argument and `A` marked as contravariant, the compiler complains about `A` being used in a covariant position. To understand why this is happening, let's look at how `A`'s variance is calculated in `foo`. `A` is first defined as contravariant:
+```scala
+def foo(fa: Foo[(-A)]): Unit
+```
+but because it is used to define a function argument, it is also marked contravariant by `foo`.
+```scala
+def foo(fa: Foo[-(-A)]): Unit
+```
+In other words, `A` is marked contravariant twice in `foo` which makes it covariant at that position, hence the compilation error:
+```scala
+def foo(fa: Foo[+A]): Unit
+```
+The takeaway here is that a type parameter variance can flip depending on its position. This is actually described in the [specification of the Scala language](https://www.scala-lang.org/files/archive/spec/2.11/04-basic-declarations-and-definitions.html#variance-annotations). So whenever you get into this kind of issue, apply the same reasoning that we have just described.
+
+## Recap
+
+Variance is a complicated topic but it does not need to be. Its main purpose is to provide us with **typesafe substitution** but also with **improved type inference**:
+```scala
+class Animal
+class Zebra extends Animal
+// thanks to covariance
+val animal: Animal = new Zebra
+
+class Hotel[-T]
+def generic = new Hotel[Any]
+// thanks to contravariance
+val ah: Hotel[A] = generic
+```
+
+Secondly, one may wonder how to remember what should be **covariant** or **contravariant**. A good mnemonic is to keep in mind that whatever is **produced** by a class should be marked as **covariant** while anything **consumed** by a class should be **contravariant**. In case of conflict, fall back on the [substitution rule](#Substitution-rule).
+
+Special thanks To [Calvin](https://github.com/calvinlfer), [John](https://github.com/jdegoes) and [Adam](https://github.com/adamgfraser) for their help writing this post.
+
+## References
+
+- [Checking-variance-annotations](http://mbonaci.github.io/scala/#433---checking-variance-annotations)
+- [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle)
+- [Specification of the Scala language](https://www.scala-lang.org/files/archive/spec/2.11/04-basic-declarations-and-definitions.html#variance-annotations)
