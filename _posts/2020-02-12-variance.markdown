@@ -55,8 +55,8 @@ One good way to think about variance is to look at the substitution process this
 val fl: Foo[L] = new Foo[R] // the `=` stands for "can be substituted by"
 ```
 - **invariance**: does not allow any substitution so `R` must equal `L` (`L =:= R`)
-- **covariance**: allows substitution only if `R` is **more** specialized (+) than `L` (`L :> R`)
-- **contravariance** allows substitution only if `R` is **less** specialized (-) than `L` (`L <: R`)
+- **covariance**: allows one only if `R` is **more** specialized (+) than `L` (`L :> R`)
+- **contravariance** allows one only if `R` is **less** specialized (-) than `L` (`L <: R`)
 
 In other words, the general substitution rule is as follow:
 - when types are **covariant**, `L` has to be a **supertype** of `R`
