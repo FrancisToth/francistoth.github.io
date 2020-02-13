@@ -74,7 +74,7 @@ A function is therefore **contravariant in its arguments** and **covariant in it
 ```scala
 val f1: Function1[L1, R0] = new Function1[L0, R1] { /* ... */ }
 ```
-If we apply the general substitution rule mentioned earlier, we conclude that `L1 <: L0` and `R0 >: R1`. In other words, the function on the left has to:
+If we apply the general [substitution rule](#substitutionrule) mentioned earlier, we conclude that `L1 <: L0` and `R0 >: R1`. In other words, the function on the left has to:
 - take a **more** specialized type as an argument (**contravariance**)
 - and/or return a **less** specialized type (**covariance**)
 
