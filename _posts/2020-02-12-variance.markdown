@@ -5,7 +5,7 @@ date:   2020-02-12 08:02:48 -0500
 brief: 
 ---
 
-Variance is a topic that may be pretty confusing at first and wich results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type `A` and its subtype `B`, can one be safely substituted for the other without affecting the program correctness? John De Goes made recently two [Spartan](https://www.patreon.com/jdegoes) sessions about this topic, and we will cover some of the thoughts he shared during these.
+Variance is a topic that may be pretty confusing at first and wich results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type `A` and its subtype `B`, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two [Spartan](https://www.patreon.com/jdegoes) sessions about this topic, and we will cover some of the thoughts he shared during these.
 
 ## Subtype 101
 
@@ -155,7 +155,7 @@ trait Foo[-T] {
 
 ## Variance flipping
 
-As if variance was not enough complicated, you would probably surprised that a type's variance can also flip depending on the context.
+As if variance was not enough complicated, a type's variance can also flip depending on the context.
 ```scala
 trait Foo[-A] {
   def foo(fa: Foo[A]): Unit
@@ -192,7 +192,7 @@ def generic = new Hotel[Any]
 val ah: Hotel[A] = generic
 ```
 
-Secondly, one may wonder how to remember what should be **covariant** or **contravariant**. A good mnemonic is to keep in mind that whatever is **produced** by a class should be marked as **covariant** while anything **consumed** by a class should be **contravariant**. In case of conflict, fall back on the [substitution rule](#Substitution-rule).
+Secondly, one may wonder how to remember what should be **covariant** or **contravariant**. A good mnemonic is to remember that whatever is **produced** by a class should be marked as **covariant** while anything **consumed** by a class should be **contravariant**. In case of conflict, fall back on the [substitution rule](#Substitution-rule).
 
 Special thanks To [Calvin](https://github.com/calvinlfer), [John](https://github.com/jdegoes) and [Adam](https://github.com/adamgfraser) for their help writing this post.
 
