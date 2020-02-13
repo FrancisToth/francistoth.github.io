@@ -98,30 +98,7 @@ trait Bar[-U] {
   // position in type (t: T)T of method bar
 }
 ```
-The compiler prevents us from doing this in order to enforce subtyping rules and guarantee correctness at runtime. In some cases, we may still however need to use a type parameter at different positions. This can be done but under some restrictions.
-
-In the first case, `T` is covariant and cannot be used as a function argument. We can however use an appropriate substitute for `foo` that satifies the requirements for contravariance. Remember that _when types are **covariant** `L` has to be a **supertype** of `R`_. 
-```scala
-val fl: Function1[L, Unit] = new Function1[R, Unit]
-```
-So a valid substitute for `foo` would be `T1 => Unit` with `T1 >: T`. This gives us:
-```scala
-trait Foo[+T] {
-  def foo[T1 >: T](t: T1): Unit
-}
-```
-Similarly in the second case, `T` is contravariant and cannot be used as a function result. In order to satisfy the requirements for covariance, we need to remember that _when types are **contravariant**, `L` has to be a **subtype** of `R`_
-```scala
-val fl: Function1[L, Unit] = new Function1[R, Unit]
-```
-So a valid substitute for `foo` would be `T0 => Unit` with `T0 <: T`. This gives us:
-```scala
-trait Foo[-T] {
-  def foo[T0 <: T](t: T0): Unit
-}
-```
-
-To convince yourself, let's think about what you would be allowed to do if variance errors would not be caught at compile time:
+The compiler prevents us from doing this in order to enforce subtyping rules and guarantee correctness at runtime. To convince yourself, let's think about what you would be allowed to do if variance errors would not be caught at compile time:
 ```scala
 class A
 class B0 extends A
@@ -152,6 +129,28 @@ val bb1: Bar[B1] = ba
 // This will crash the program at runtime
 // as `bb1` can only produce `B1`s
 val b1: B1 = ba.bar()
+```
+In some cases, we may however need to use a type parameter at different positions. This can be done but under some restrictions.
+
+In the first case, `T` is covariant and cannot be used as a function argument. We can however use an appropriate substitute for `foo` that satifies the requirements for contravariance. Remember that _when types are **covariant** `L` has to be a **supertype** of `R`_. 
+```scala
+val fl: Function1[L, Unit] = new Function1[R, Unit]
+```
+So a valid substitute for `foo` would be `T1 => Unit` with `T1 >: T`. This gives us:
+```scala
+trait Foo[+T] {
+  def foo[T1 >: T](t: T1): Unit
+}
+```
+Similarly in the second case, `T` is contravariant and cannot be used as a function result. In order to satisfy the requirements for covariance, we need to remember that _when types are **contravariant**, `L` has to be a **subtype** of `R`_
+```scala
+val fl: Function1[L, Unit] = new Function1[R, Unit]
+```
+So a valid substitute for `foo` would be `T0 => Unit` with `T0 <: T`. This gives us:
+```scala
+trait Foo[-T] {
+  def foo[T0 <: T](t: T0): Unit
+}
 ```
 
 ## Variance flipping
