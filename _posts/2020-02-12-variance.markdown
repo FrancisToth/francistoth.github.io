@@ -5,7 +5,7 @@ date:   2020-02-12 08:02:48 -0500
 brief: 
 ---
 
-Variance is a topic that may be pretty confusing at first and wich results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type `A` and its subtype `B`, can one be safely substituted for the other without affecting the program correctness? John De Goes made recently two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these.
+Variance is a topic that may be pretty confusing at first and wich results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type `A` and its subtype `B`, can one be safely substituted for the other without affecting the program correctness? John De Goes made recently two [Spartan](https://www.patreon.com/jdegoes) sessions about this topic, and we will cover some of the thoughts he shared during these.
 
 ## Subtype 101
 
