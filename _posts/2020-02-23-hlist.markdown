@@ -1,0 +1,230 @@
+---
+layout: post
+title:  "HList"
+date:   2020-02-29 08:02:48 -0500
+brief: 
+---
+
+The Heterogeneous List aka `HList` is a pretty well-known data structure in the functional / type programming world and is a very interesting topic to cover as it can teach us a lot about Scala's type system in general. [John A. De Goes](https://github.com/jdegoes) recently used this concept to model an [SQL language](https://github.com/jdegoes/zio-sql) in a typesafe fashion and presented its work in a [Spartan session](https://www.patreon.com/jdegoes/posts).
+
+The problem tackled by `HList`s is about storing elements of different types (that is heterogeneous elements) and retaining information about these types at the same time.
+```scala
+val xs = List("a string", true, 42)
+// xs: List[Any] = List(a string, true, 42)
+```
+While being able to store heterogeneous elements, a typical `List` does not keep track of their types. Instead, it falls back on the first common type in the type hierarchy (`Any` in this case):
+```scala
+val xs = List(
+  "a string", // String  -> AnyRef -> Any
+  true,       // Boolean -> AnyVal -> Any
+  42          // Int     -> AnyVal -> Any
+)
+// AnyRef and AnyVal have one parent in common which is Any,
+// therfore `xs` is a `List[Any]`
+```
+Ideally, we would like to track the type of each element, just like we would do with tuples:
+```scala
+val xs: (String, (Boolean, (Int, Unit))) = 
+  ("a string", 
+    (true, 
+      (42, ())
+    )
+  )
+```
+We can tackle this problem by providing an appropriate data structure:
+```scala
+sealed trait HList
+object HList {
+  case object Empty                                extends HList
+  case class Cons[A, B <: HList](head: A, tail: B) extends HList
+}
+```
+`Empty` represents an `HList` with no elements while a `Cons` is a cell containing one element `A` along with a `tail` storing the rest of the `HList`. An `HList` can be then built like following:
+```scala
+val xs: HList =
+  Cons("a string", 
+    Cons(true, 
+      Cons(42, Empty)
+    )
+  )
+```
+This approach solves the problem but remains very verbose. We can improve this by adding an operator designed to prepend an element to an `HList`:
+```scala
+object HList {
+  // ...
+  implicit class ops[A <: HList](xs: A) {
+    def prepend[B](b: B): Cons[B, A] = Cons(b, xs)
+  }
+}
+// ...
+val xs = Empty
+  .prepend(42)
+  .prepend(true)
+  .prepend("a string")
+```
+With `ops`, we tell the compiler that any `A` subtyping an `HList` provides a `prepend` operator designed to add a `B` in front of the list. This is a bit confusing however as one has to build an `HList` starting from its last element (`Empty`). Let's leverage infix notation to make this more user-friendly:
+```scala
+implicit class ops[A <: HList](a: A) {
+  def :*:[B](b: B): Cons[B, A] = Cons(b, a)
+}
+//...
+val xs: Cons[String, Cons[Boolean, Cons[Int, Empty.type]]] =
+    "a string" :*: true :*: 42 :*: Empty
+```
+As you probably know, infix operators (that is symbolic operators ending with a `:`) flip the callee and the caller during a function call:
+```scala
+  class Foo(val j: Int) {
+    def *:(i : Int): Foo = new Foo(i)
+  }
+
+  43 *: (new Foo(42))
+```
+This trick simplifies the composition of an `HList` at the value-level but not at the type-level. The type of `xs` is still very verbose. So let's try to do the same improvement at the type-level using some type aliases:
+```scala
+object HList {
+  // This alias prevents writing Empty.type everywhere we 
+  // need to refer to `Empty` at the type-level
+  type Empty = Empty.type
+
+  type :*:[A, B <: HList] = Cons[A, B]
+  // ...
+}
+// ...
+val xs: String :*: Boolean :*: Int :*: Empty =
+    "a string" :*: true :*: 42 :*: Empty
+```
+Notice that infix operators work at the value-level but also at the type-level. Using this technique, we made the type of an `HList` very readable. What about extracting elements from an `HList` now? To achieve this, we could use an [Extractor](https://docs.scala-lang.org/tour/extractor-objects.html):
+```scala
+object :*: {
+  def unapply[A, B <: HList](cons: Cons[A, B]): Option[(A, B)] =
+    Some((cons.head, cons.tail))
+}
+// ...
+val s :*: b :*: i :*: _ = 
+  "a string" :*: true :*: 42 :*: Empty
+```
+So far, we focused mainly on adding one element to an `HList` but what about concatenating two `HList`s? Before getting deeper, let's look at the code so far:
+```scala
+sealed trait HList
+object HList {
+
+  type Empty              = Empty.type
+  type :*:[A, B <: HList] = Cons[A, B]
+
+  case object Empty                                extends HList
+  case class Cons[A, B <: HList](head: A, tail: B) extends HList
+
+  object :*: {
+    def unapply[A, B <: HList](cons: Cons[A, B]): Option[(A, B)] =
+      Some((cons.head, cons.tail))
+  }
+
+  implicit class ops[A <: HList](a: A) {
+    def :*:[B](b: B): B :*: A = Cons(b, a)
+  }
+
+  val xs: String :*: Boolean :*: Int :*: Empty =
+    "a string" :*: true :*: 42 :*: Empty
+}
+```
+Concatenating two lists is less trivial but not too hard either. One approach is to think about the type returned by a function designed for this purpose:
+```scala
+sealed trait HList {
+  def ++[That <: HList](that: That): ???
+}
+```
+No matter the type being returned, we need it to be a subtype of `HList`. Therefore:
+```scala
+sealed trait HList {
+  type Append <: HList
+  def ++[That <: HList](that: That): Append
+}
+```
+If you look closely, you will see that this design is flawed. To convince ourselves, let's look at what this would imply for `Empty`:
+```scala
+object HList {
+  // ...
+  case object Empty extends HList {
+    override type Append = ???
+    override def ++[That <: HList](that: That): Append = ???
+  }
+}
+```
+What should be the implementation of `Append` in `Empty`? To figure this out, let's look at the problem from a value perspective. Appending a list to an empty list results in returning the list itself. Therefore `++` should be defined like follow:
+```scala
+override type Append = ???
+override def ++[That <: HList](that: That): Append = that
+```
+But what type should `Append` refer to? To fix this issue, we need to look at `Append` as a type-level function. That is a function which given a type returns another one:
+```scala
+override type Append[That <: HList] = That
+override def ++[That <: HList](that: That): Append[That] = that
+```
+`Append[That <: HList]` is, therefore, a type-level function taking and returning a `That`, while `++` is a value-level function taking a value typed as a `That` and returning (once expanded) a `That`. In other words, there is a symmetry between `Append[That <: HList]` and `++`, each living respectfully in the type-level world and the value-level world. We can now fix the definition of `Append` in `HList`:
+```scala
+sealed trait HList {
+  type Append[That <: HList] <: HList
+  def ++[That <: HList](that: That): Append[That]
+}
+```
+Once this understood, implementing `++` in `Cons` is trivial:
+```scala
+case class Cons[A, B <: HList](head: A, tail: B) extends HList { self =>
+  override type Append[That <: HList] = Cons[A, tail.Append[That]]
+
+  override def ++[That <: HList](that: That): self.Append[That] =
+    Cons(head, tail ++ that)
+  // ...
+}
+```
+Once again, notice the symmetry between `tail.Append[That]` and `tail ++ that`. To give you a full picture, here's the final code: 
+```scala
+sealed trait HList {
+  type Append[B <: HList] <: HList
+  def ++[That <: HList](that: That): Append[That]
+}
+object HList {
+
+  type :*:[A, B <: HList] = Cons[A, B]
+
+  type Empty = Empty.type
+
+  case object Empty extends HList {
+    override type Append[B <: HList] = B
+
+    override def ++[That <: HList](that: That): That = that
+  }
+
+  case class Cons[A, B <: HList](head: A, tail: B) extends HList { self =>
+    override type Append[C <: HList] = Cons[A, tail.Append[C]]
+
+    override def ++[That <: HList](that: That): self.Append[That] =
+      Cons(head, tail ++ that)
+  }
+
+  object :*: {
+    def unapply[A, B <: HList](cons: Cons[A, B]): Option[(A, B)] =
+      Some((cons.head, cons.tail))
+  }
+
+  implicit class ops[A <: HList](a: A) {
+    def :*:[B](b: B): B :*: A = Cons(b, a)
+  }
+}
+```
+and here's how you can use it:
+```scala
+import HList._
+
+val string :*: bool :*: int :*: _: String :*: Boolean :*: Int :*: Empty =
+  "a string" :*: true :*: 42 :*: Empty
+
+
+val x = "a string" :*: Empty
+val y = 42 :*: Empty
+  
+val s :*: i :*: _ = x ++ y
+```
+The biggest takeaways of this exercise are first that we can get the same flexibility at the value and the type level, and secondly that thinking about types as functions can be a breakthrough when you tackle Type programming. Possibilities are not endless as there are cases when the compiler won't be able to track types properly (especially when you start introducing [GADTs](/2019/11/30/gadt.html)) but are sufficient enough to provide correctness at the type level in most of the cases.
+
+I would like to thank [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for their mentoring and help to write this post.
