@@ -12,7 +12,7 @@ The problem tackled by `HList`s is about storing elements of different types (th
 val xs = List("a string", true, 42)
 // xs: List[Any] = List(a string, true, 42)
 ```
-While being able to store heterogeneous elements, a typical `List` does not keep track of their types. Instead, it falls back on the first common type in the type hierarchy (`Any` in this case):
+While being able to store heterogeneous elements, a homogeneous `List` does not keep track of their types. Instead, it falls back on the first common supertype (`Any` in this case):
 ```scala
 val xs = List(
   "a string", // String  -> AnyRef -> Any
@@ -48,7 +48,7 @@ val xs: HList =
     )
   )
 ```
-This approach solves the problem but remains very verbose. We can improve this by adding an operator designed to prepend an element to an `HList`:
+This approach solves the problem but the syntax remains very verbose. We can improve this by adding an operator designed to prepend an element to an `HList`:
 ```scala
 object HList {
   // ...
@@ -77,9 +77,14 @@ As you probably know, infix operators (that is symbolic operators ending with a 
     def *:(i : Int): Foo = new Foo(i)
   }
 
-  43 *: (new Foo(42))
+  val foo: Foo = 43 *: (new Foo(42))
 ```
-This trick simplifies the composition of an `HList` at the value-level but not at the type-level. The type of `xs` is still very verbose. So let's try to do the same improvement at the type-level using some type aliases:
+This trick simplifies the composition of an `HList` at the value-level but the type of `xs` is still very verbose.
+```scala
+val xs: Cons[String, Cons[Boolean, Cons[Int, Empty.type]]] =
+    "a string" :*: true :*: 42 :*: Empty
+```
+So let's try to do the same improvement at the type-level using some type aliases:
 ```scala
 object HList {
   // This alias prevents writing Empty.type everywhere we 
@@ -93,7 +98,7 @@ object HList {
 val xs: String :*: Boolean :*: Int :*: Empty =
     "a string" :*: true :*: 42 :*: Empty
 ```
-Notice that infix operators work at the value-level but also at the type-level. Using this technique, we made the type of an `HList` very readable. What about extracting elements from an `HList` now? To achieve this, we could use an [Extractor](https://docs.scala-lang.org/tour/extractor-objects.html):
+Notice that infix operators work at the value-level but also at the type-level. Using this technique, the type of an `HList` is now very readable. What about extracting elements from an `HList` now? To achieve this, an [Extractor](https://docs.scala-lang.org/tour/extractor-objects.html) could be used:
 ```scala
 object :*: {
   def unapply[A, B <: HList](cons: Cons[A, B]): Option[(A, B)] =
@@ -103,7 +108,7 @@ object :*: {
 val s :*: b :*: i :*: _ = 
   "a string" :*: true :*: 42 :*: Empty
 ```
-So far, we focused mainly on adding one element to an `HList` but what about concatenating two `HList`s? Before getting deeper, let's look at the code so far:
+So far, we focused mainly on prepending one element to an `HList` but what about concatenating two `HList`s? Before getting deeper, let's look at the code so far:
 ```scala
 sealed trait HList
 object HList {
@@ -140,7 +145,7 @@ sealed trait HList {
   def ++[That <: HList](that: That): Append
 }
 ```
-If you look closely, you will see that this design is flawed. To convince ourselves, let's look at what this would imply for `Empty`:
+Append has to be a type member because it may change depending on the subtype of the HList. If you look closely however, you will see that this design is flawed. To convince ourselves, let's look at what this would imply for `Empty`:
 ```scala
 object HList {
   // ...
@@ -160,7 +165,7 @@ But what type should `Append` refer to? To fix this issue, we need to look at `A
 override type Append[That <: HList] = That
 override def ++[That <: HList](that: That): Append[That] = that
 ```
-`Append[That <: HList]` is, therefore, a type-level function taking and returning a `That`, while `++` is a value-level function taking a value typed as a `That` and returning (once expanded) a `That`. In other words, there is a symmetry between `Append[That <: HList]` and `++`, each living respectfully in the type-level world and the value-level world. We can now fix the definition of `Append` in `HList`:
+`Append[That <: HList]` is a type-level function taking and returning a `That`, while `++` is a value-level function taking a value typed as a `That` and returning (once expanded) a `That`. In other words, there is a symmetry between `Append[That <: HList]` and `++`, each living respectfully in the type-level world and the value-level world. We can now fix the definition of `Append` in `HList`:
 ```scala
 sealed trait HList {
   type Append[That <: HList] <: HList
@@ -177,7 +182,7 @@ case class Cons[A, B <: HList](head: A, tail: B) extends HList { self =>
   // ...
 }
 ```
-Once again, notice the symmetry between `tail.Append[That]` and `tail ++ that`. To give you a full picture, here's the final code: 
+Once again, notice the symmetry between the type level (`tail.Append[That]`) and the value level (`tail ++ that`). To give you a full picture, here's the final code: 
 ```scala
 sealed trait HList {
   type Append[B <: HList] <: HList
@@ -225,6 +230,6 @@ val y = 42 :*: Empty
   
 val s :*: i :*: _ = x ++ y
 ```
-The biggest takeaways of this exercise are first that we can get the same flexibility at the value and the type level, and secondly that thinking about types as functions can be a breakthrough when you tackle Type programming. Possibilities are not endless as there are cases when the compiler won't be able to track types properly (especially when you start introducing [GADTs](/2019/11/30/gadt.html)) but are sufficient enough to provide correctness at the type level in most of the cases.
+The biggest takeaways of this exercise are first that we can get the same flexibility at the value and the type level, and secondly that thinking about types as functions can be a breakthrough when you tackle Type programming. Possibilities are not endless as there are cases when the compiler won't be able to track types properly (especially when you start introducing [GADTs](/2019/11/30/gadt.html)) but are sufficient enough to provide correctness at the type level in most cases.
 
 I would like to thank [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for their mentoring and help to write this post.
