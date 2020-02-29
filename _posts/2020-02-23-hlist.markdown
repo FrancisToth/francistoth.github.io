@@ -232,4 +232,4 @@ val s :*: i :*: _ = x ++ y
 ```
 The biggest takeaways of this exercise are first that we can get the same flexibility at the value and the type level, and secondly that thinking about types as functions can be a breakthrough when you tackle Type programming. However, the possibilities are not endless in Scala 2.x as there are cases when the compiler won’t be able to track types properly (especially when you start introducing GADTs) but are sufficient enough to provide correctness at the type level in most cases. The situation is vastly improved in Dotty.
 
-I would like to thank [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for their mentoring and help to write this post.
+I would like to thank [John](https://github.com/jdegoes) and [Calvin](https://github.com/calvinlfer) for their mentoring and help to write this post.
