@@ -6,3 +6,9 @@ _site
 .jekyll-metadata
 vendor
 .DS_Store
+
+target
+project/target
+project/metals.sbt
+.bloop
+.metals
