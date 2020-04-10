@@ -88,7 +88,7 @@ object JSonSerializer {
 }
 
 def serialize[A: JSonSerializer](a: A) =
-  // Under the hood, this actually makes a call to apply
+  // Under the hood, this actually makes a call to apply[A].
   // JSonSerializer.apply[A].toJson(a)
   JSonSerializer[A].toJson(a)
 ```
@@ -112,4 +112,4 @@ import io.github.francistoth._
 ```
 One question you might ask is how to define two implementations of the same typeclass for the same data type. We'll actually cover that in the next post so stay tuned. Meanwhile, you can find the code [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/io/github/francistoth).
 
-Thanks to [Justin Heyes Jones](https://github.com/justinhj), [Calvin L. Fernandes](https://github.com/calvinlfer), and [Nader Ghanbari](https://github.com/naderghanbari) for helping me writing this post.
+Thanks to [Justin Heyes Jones](https://github.com/justinhj), [Calvin L. Fernandes](https://github.com/calvinlfer), and [Nader Ghanbari](https://github.com/naderghanbari) for helping me to write this post.
