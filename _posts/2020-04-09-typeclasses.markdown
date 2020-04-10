@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Typeclasses"
-date:   2020-04-11 08:02:48 -0500
+date:   2020-04-09 08:02:48 -0500
 brief: 
 ---
 
