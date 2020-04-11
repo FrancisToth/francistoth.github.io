@@ -110,6 +110,8 @@ import io.github.francistoth._
 
 (new Person).toJson
 ```
-One question you might ask is how to define two implementations of the same typeclass for the same data type. We'll actually cover that in the next post so stay tuned. Meanwhile, you can find the code [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/io/github/francistoth/typeclasses).
+One question you might ask is how to define two implementations of the same typeclass for the same data type. We'll actually cover that in the [next post](https://francistoth.github.io/2020/04/11/newtypes.html) so stay tuned. Meanwhile, you can find the code [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/io/github/francistoth/typeclasses).
+
+## Credits
 
 Thanks to [Justin Heyes Jones](https://github.com/justinhj), [Calvin L. Fernandes](https://github.com/calvinlfer), and [Nader Ghanbari](https://github.com/naderghanbari) for helping me to write this post.
