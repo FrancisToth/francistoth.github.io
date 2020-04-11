@@ -1,0 +1,356 @@
+---
+layout: post
+title:  "Newtype"
+date:   2020-04-11 08:02:48 -0500
+brief: 
+---
+
+In the previous post, we briefly covered how a typeclass can be implemented and ended up asking ourselves how multiple implementations of a typeclass could be done for the same data type while not compromising the implicit mechanism (in other words, type class coherency). This technique has been deeply covered in a [Spartan session](https://www.patreon.com/jdegoes) presented by [John De Goes](https://github.com/jdegoes), and this is a small teaser of what one can learn while attending his course:
+```scala
+trait Associative[A] {
+  def combine(a0: A, a1: A): A
+}
+object Associative {
+  def apply[A: Associative]: Associative[A] = implicitly[Associative[A]]
+
+  implicit val intAssociative: Associative[Int] = _ + _
+  /* which is syntactic sugar for: 
+  implicit val intAssociative: Associative[Int] = (a, b) => a + b
+  */
+  // ...
+}
+```
+The `Associative` typeclass describes how two values of the same type can be combined using an associative combinator. In order for a structure to be associative, the combinator must obey the following law:
+```scala
+a + (b + c) === (a + b) + c
+```
+This is an aspect of typeclasses we have not mentioned in the previous post. Each typeclass has specific laws that must be satisfied by its implementations (commonly called _instances_ in the functional programming jargon). There is no such thing as a lawless typeclass (otherwise it cannot be referred to as one).<br/>
+
+Back to our problem, when it comes to `Int`, there are two implementations possible to satisfy this associative law:
+```scala
+implicit val intSumAssociative    : Associative[Int] = _ + _
+implicit val intProductAssociative: Associative[Int] = _ * _
+```
+As we explained it in the previous post, the compiler throws an error whenever it cannot figure out which one of two or more implicits definitions should be selected to satisfy an implicit requirement. Therefore, it may seem at first impossible to create two implicit implementations of a typeclass, in the same implicit scope, for the same data type (eg. `Int`).
+
+## Value Type
+
+One approach to get around this, would consist in creating a value type:
+```scala
+case class Mult(value: Int) extends AnyVal
+
+object Associative {
+  implicit val sum    : Associative[Int] = _ + _
+  implicit val product: Associative[Mult] = 
+    (a0, a1) => Mult(a0.value * a1.value)
+}
+```
+This is not bad, but very inefficient (in terms of memory usage and ergonomics) even using `AnyVal`. `AnyVal` would prevent some extra allocations for sure but won't get us [too far](https://failex.blogspot.com/2017/04/the-high-cost-of-anyval-subclasses.html?m=1):
+```scala
+def reduce[A: Associative](zero: A, as: List[A]): A = 
+  as.fold(zero)(Associative[A].combine)
+```
+We would lose the benefits of `AnyVal` as soon as a `List[Mult]` is passed to `reduce` as memory allocation is required when a value value class is used as a type argument:
+```scala
+reduce(Mult(0), List(Mult(1), Mult(2))) // Mult(3)
+```
+What we really need is a way to create a new type that can be used in place of another, while being considered different during the implicit lookup, so that an `Associative[Mult]` is different than an `Associative[Int]`.
+
+## Naive approach
+Haskell provides a feature called `newtype` which exactly does that. Let's try to implement a similar feature in Scala and take a step-by-step approach:
+```scala
+sealed trait Newtype[A] {
+  type WrappedType = A
+  def wrap(a: A): WrappedType = a
+}
+```
+`Newtype[A]` defines a type that can be used in place of an `A`. It provides a `wrap` function which given an `A` returns a `Newtype[A].WrappedType`. If you look closely, you will notice that `WrappedType` is a type alias for `A`:
+```scala
+object Mult extends Newtype[Int]
+type Mult = Mult.WrappedType
+
+val m1: Mult = Mult.wrap(1)
+def add1(i: Int): Int = i + 1
+
+add1(m1) // 2 
+``` 
+First, an object `Mult` is defined to represent the newtype. A type alias `Mult` is then created on `Mult.WrappedType` which points to `A`. This works fine, but this does not give us much compared to a simple type alias:
+```scala
+type Mult = Int
+
+val m1: Mult = 1
+def add1(i: Int): Int = i + 1
+
+add1(m1) // 2 
+```
+And when it comes to implicits, Scala does not make any difference between an `Associative[Int]` and an `Associative[Mult]`. The problem here is that the compiler still knows that `Mult` stands for `Int`. This connection needs to be broken somehow so they are not considered the same. We could do this using an additional interface:
+```scala
+trait Foo {
+  type Bar = Int
+  def bar: Bar = 42
+}
+
+val foo: Foo = new Foo {}
+val i  : Int = foo.bar // compiles
+```
+In the above example, Scala knows that `Bar` is a type alias for `Int`. Therefore, a `Foo#Bar` can be used in place of an `Int`, and these two are considered the same. However, this connection breaks whenever an additional abstraction layer is introduced:
+```scala
+trait Foo {
+  type Bar
+  def b(): Bar
+}
+
+class FooImpl extends Foo { 
+  type Bar = Int
+  def b(): Bar = 42
+}
+
+val foo: Foo = new FooImpl
+
+val i: foo.Bar = foo.b() // compiles
+val i: Int     = foo.b() // does not compiles
+/*                   ^
+error: type mismatch;
+ found   : foo.Bar
+ required: Int
+*/
+```
+As shown by this example, `Bar` and `Int` becomes distinct types even though they are the same. This is because `foo` is defined as a `Foo` and not a `FooImpl`. When refering to `Foo`, there is no way to prove that `Foo#Bar` points to `Int`. So `foo.b()` could technically return anything.
+
+## The real newtype
+Using what we've just learnt, let's use a similar approach with `Newtype[A]`:
+```scala
+sealed trait Newtype[A] {
+  type WrappedType
+  def wrap(a: A): WrappedType
+}
+
+val Mult: Newtype[Int] = new Newtype[Int] {
+  type WrappedType = Int
+  def wrap(a: Int): WrappedType = a
+}
+type Mult = Mult.WrappedType
+
+val m0: Mult = Mult.wrap(1) // compiles
+val m1: Int  = Mult.wrap(1) // does not compile
+```
+The connection between `Mult` and `Int` is now broken, and they are not considered as the same type by Scala anymore. However, we lost the ability to use a `Mult` in place of an `Int`. In some cases that's exactly what we would like to achieve but not always. For this reason, we could make the distinction between `Newtype` which is _unrelated_ to the initial type (this is how Haskell implements it), and `Subtype` which _"extends"_ it:
+```scala
+sealed trait Newtype[A] {
+  type WrappedType
+  // ...
+}
+
+sealed trait Subtype[A] {
+  type WrappedType <: A
+  // ...
+}
+// ...
+val Mult: Subtype[Int] = new Subtype[Int] {
+  type WrappedType = Int
+  def wrap(a: Int): WrappedType = a
+}
+type Mult = Mult.WrappedType
+
+val m0: Mult = Mult.wrap(1) // compiles
+val m1: Int  = Mult.wrap(1) // compiles
+```
+So far, in terms of memory allocation the only cost is the one implied by creating `Mult`. Wrapping a type to a `WrappedType` only consists of a function call with no extra allocation. This approach is therefore more contraining than a type alias but at least as efficient memory wise than using a value class.<br/>
+
+What about implicit resolution now? Can we declare two implementations of the `Associative` typeclass for, technically speaking, the same data type? To achieve this, we would need a bit more than just `wrap`:
+```scala
+sealed trait Newtype[A] {
+  // ...
+  def unwrap(wt: WrappedType): A
+}
+
+val Mult: Newtype[Int] = new Newtype[Int] {
+  // ...
+  def unwrap(wt: WrappedType): Int = wt
+}
+
+implicit val sum    : Associative[Int] = _ + _
+implicit val product: Associative[Mult] = 
+  (a0, a1) => Mult.wrap(
+    Mult.unwrap(a0) * Mult.unwrap(a1)
+  )
+```
+Let's see if we can use this with `reduce` without getting a compilation error:
+```scala
+reduce(1, List(2, 3)) // 2 + 3 = 5
+
+reduce(
+  Mult.wrap(1), 
+  List(Mult.wrap(2), Mult.wrap(3))
+) // 2 * 3 = 6
+```
+Great! we've just managed to create a type that is more constraining that an type alias, and more efficient memory wise than using a value class. Before going forward, let's look at how the code looks like so far:
+```scala
+sealed trait Newtype[A] {
+  type WrappedType
+  def wrap(a: Int): WrappedType
+  def unwrap(wt: WrappedType): A
+}
+
+val Mult: Newtype[Int] = new Newtype[Int] {
+  type WrappedType = Int
+  def wrap(a: Int): WrappedType    = a
+  def unwrap(wt: WrappedType): Int = wt
+}
+
+implicit val sum    : Associative[Int] = _ + _
+implicit val product: Associative[Mult] = 
+    (a0, a1) => Mult.wrap(
+      Mult.unwrap(a0) * Mult.unwrap(a1)
+    )
+
+reduce(1, List(2, 3)) // 5
+reduce(Mult.wrap(1), List(Mult.wrap(2), Mult.wrap(3))) // 6
+```
+
+## Ergonomics
+This is great but there is a lot of boilerplate. Declaring a newtype should be at most two lines long. If we think about it, no matter the newtype, the implementation of `Newtype[A]` is always the same. We could therefore provide an additional module dedicated for that:
+```scala
+object NewtypeModule {
+  def newtype[A]: Newtype[A] = new Newtype[A] {
+    type WrappedType = A
+    def wrap(a: A): WrappedType = a
+    def unwrap(wt: WrappedType): A = wt
+  }
+}
+
+val Mult: Newtype[Int] = NewtypeModule.newtype[Int]
+```
+We could also improve the wrapping operation by simply renaming the `wrap` method to `apply`:
+```scala
+sealed trait Newtype[A] {
+  def apply(a: A): WrappedType
+  // ...
+}
+```
+The API looks already beter:
+```scala
+val Mult: Newtype[Int] = NewtypeModule.newtype[Int]
+type Mult = Mult.WrappedType
+
+val m0: Mult = Mult(1)
+```
+
+## Pattern Matching
+There is one last thing we cannot do with a newtype which is pattern matching. `Mult` is currently a value which prevents writing anything such as:
+```scala
+Mult(42) match {
+  case Mult(meaningOfLife) => ???
+}
+```
+To achieve this, `Mult` has to be an `object` implementing a `unapply` method:
+```scala
+object Mult extends ???
+type Mult = Mult.WrappedType
+```
+However, `Mult` can't extend `Newtype[Int]` otherwise Scala will establish a link between `Mult.WrappedType` and `Int` bringing us back to square one. `Newtype[Int]` should be therefore provided as a dependent type:
+```scala
+object Mult extends module.Newtype[Int]
+type Mult = Mult.WrappedType
+```
+`module` is a value providing a dependent type `Newtype[A]` and which could be implemented like this:
+```scala
+trait NewtypeModule {
+  sealed trait Newtype[A] {
+    type WrappedType
+    def apply(a: A): WrappedType
+    def unwrap(wt: WrappedType): A
+  }
+}
+
+val module: NewtypeModule = new NewtypeModule {}
+```
+`Mult` can now extends `module.Newtype[Int]` as described earlier:
+```scala
+object Mult extends module.Newtype[Int] {
+  type WrappedType  = Int
+  def apply(a: Int): WrappedType = a
+  def unwrap(wt: WrappedType): Int = wt
+}
+```
+
+## Reducing Boilerplate
+So far so good, except that we ended up with even more boilerplate :) If we think about it, we don't really need multiple instances of `NewtypeModule`. We just need one:
+```scala
+object NewtypeModule {
+  val instance: NewtypeModule = new NewtypeModule {}
+}
+
+object Mult extends NewtypeModule.instance.Newtype[Int] {
+ // ...
+}
+```
+Secondly, we could factor the implementation of a `Newtype[A]`, as it is the same for every newtype:
+```scala
+trait NewtypeModule {
+  def newtype[A]: Newtype[A]
+  // ...
+}
+
+object NewtypeModule {
+  val instance: NewtypeModule = new NewtypeModule {
+    def newtype[A]: Newtype[A] = new Newtype[A] {
+      type WrappedType  = A
+      def apply(a: A): WrappedType = a
+      def unwrap(wt: WrappedType): A = wt
+    }
+  }
+}
+```
+Finally the API could be improved by creating an abstract class `Newtype[A]` which delegates the work to `NewtypeModule.instance`:
+```scala
+trait NewtypeModuleExports {
+  import NewtypeModule._
+  
+  abstract class Newtype[A] extends instance.Newtype[A] {
+    val newtype: instance.Newtype[A] = instance.newtype[A]
+    type WrappedType = newtype.WrappedType
+
+    def apply(a: A): WrappedType   = newtype(a)
+    def unwrap(wt: WrappedType): A = newtype.unwrap(wt)
+  }
+}
+```
+`NewtypeModuleExports` could be then mixed in a package object to prevent any additional import from the user:
+```scala
+package io.github.francistoth
+
+// if the package is called `newtype`
+package object newtype extends NewtypeModuleExports
+```
+This makes the declaration of a newtype really easy:
+```scala
+object Mult extends Newtype[Int]
+type Mult = Mult.WrappedType
+```
+The last piece consists of adding an `unapply` method to enable pattern matching capabilities for any newtype:
+```scala
+trait NewtypeModule {
+  sealed trait Newtype[A] {
+    type WrappedType
+    def apply(a: A): WrappedType
+    def unwrap(wt: WrappedType): A
+    def unapply(wt: WrappedType): Option[A] =
+      Some(unwrap(wt))
+  }
+}
+// ...
+Mult(42) match {
+  case Mult(i) => i
+} // 42
+```
+There we go. The code is available [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/io/github/francistoth/newtype).
+
+
+## Additional thoughts
+
+In the past, [Calvin](https://github.com/calvinlfer) and myself have been pushing hard to use strong typing everywhere in our code. We used to rely on value types, macros and libraries such as [scala-newtype](https://github.com/estatico/scala-newtype). Knowing the technique we just covered is one more tool under our belt, and is probably the one we'll use in the future, especially since it will be part of the incoming [zio-prelude](https://twitter.com/jdegoes/status/1236099212137373696?lang=en) library.
+
+## Credits
+
+Thanks to [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for helping me to write this post and for their mentoring.
