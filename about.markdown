@@ -16,11 +16,13 @@ sidebar_link: true
 <div class="overflow: auto;">
   <b>People I like to work with:</b>
   <p style="text-align:justify; text-justify: inter-word;">
-    - <a href="https://www.linkedin.com/in/adam-peck-1717281/"> Adam Peck</a>
-    - <a href="https://ca.linkedin.com/in/calvin-lee-fernandes">Calvin L. Fernandes</a>
-    - <a href="https://www.linkedin.com/in/christopher-hunt-a54108/">Christopher Hunt</a>
-    - <a href="https://www.linkedin.com/in/jdegoes/">John De Goes</a>
-    - <a href="https://www.linkedin.com/in/nhuray/">Nicolas Huray</a>
-    - <a href="https://www.linkedin.com/in/yunan-zhao-55b02937/">Yunan Zhao</a>
+    <ul>
+      <li><a href="https://www.linkedin.com/in/adam-peck-1717281/"> Adam Peck</a></li>
+      <li><a href="https://ca.linkedin.com/in/calvin-lee-fernandes">Calvin L. Fernandes</a></li>
+      <li><a href="https://www.linkedin.com/in/christopher-hunt-a54108/">Christopher Hunt</a></li>
+      <li><a href="https://www.linkedin.com/in/jdegoes/">John De Goes</a></li>
+      <li><a href="https://www.linkedin.com/in/nhuray/">Nicolas Huray</a></li>
+      <li><a href="https://www.linkedin.com/in/yunan-zhao-55b02937/">Yunan Zhao</a></li>
+    </ul>
   </p>
 </div>
