@@ -1,7 +1,5 @@
 package io.github.francistoth.typeclasses
 
-import io.github.francistoth.domain._
-
 trait Json
 trait JSonSerializer[A] {
   def toJson(a: A): Json
