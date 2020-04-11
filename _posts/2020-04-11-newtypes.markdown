@@ -5,7 +5,9 @@ date:   2020-04-11 08:02:48 -0500
 brief: 
 ---
 
-In the previous post, we briefly covered how a typeclass can be implemented and ended up asking ourselves how multiple implementations of a typeclass could be done for the same data type while not compromising the implicit mechanism (in other words, type class coherency). This technique has been deeply covered in a [Spartan session](https://www.patreon.com/jdegoes) presented by [John De Goes](https://github.com/jdegoes), and this is a small teaser of what one can learn while attending his course:
+In the previous post, we briefly covered how a typeclass can be implemented and ended up asking ourselves how multiple implementations of a typeclass could be done for the same data type while not compromising the implicit mechanism (in other words, type class coherency).
+
+This technique has been deeply covered in a [Spartan session](https://www.patreon.com/jdegoes) presented by [John De Goes](https://github.com/jdegoes), and this is a small teaser of what one can learn while attending his course:
 ```scala
 trait Associative[A] {
   def combine(a0: A, a1: A): A
