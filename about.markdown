@@ -11,5 +11,16 @@ sidebar_link: true
   <br/><br/>
   I currently work at <a href="http://www.yoppworks.com">Yoppworks</a> as a Lead Consultant.
   <br/><br/>
-  Scala, Akka, Spark, Cats, Java, Haskell, Object Oriented / Functional Programming, Reactive Architectures, Terraform, AWS</p>
+  Scala, Akka, Spark, ZIO, Cats, Java, Haskell, Object Oriented / Functional Programming, Reactive Architectures, Terraform, AWS</p>
+</div>
+<div class="overflow: auto;">
+  <b>People I like to work with:</b>
+  <p style="text-align:justify; text-justify: inter-word;">
+    - <a href="https://www.linkedin.com/in/adam-peck-1717281/"> Adam Peck</a>
+    - <a href="https://ca.linkedin.com/in/calvin-lee-fernandes">Calvin L. Fernandes</a>
+    - <a href="https://www.linkedin.com/in/christopher-hunt-a54108/">Christopher Hunt</a>
+    - <a href="https://www.linkedin.com/in/jdegoes/">John De Goes</a>
+    - <a href="https://www.linkedin.com/in/nhuray/">Nicolas Huray</a>
+    - <a href="https://www.linkedin.com/in/yunan-zhao-55b02937/">Yunan Zhao</a>
+  </p>
 </div>
