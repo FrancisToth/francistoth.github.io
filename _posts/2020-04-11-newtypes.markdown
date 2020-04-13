@@ -357,4 +357,4 @@ In the past, [Calvin](https://github.com/calvinlfer) and myself have been pushin
 
 ## Credits
 
-Thanks to [Calvin](https://github.com/calvinlfer) and [John](https://github.com/jdegoes) for helping me to write this post and for their mentoring.
+Thanks to [Calvin](https://github.com/calvinlfer), [Phil](https://github.com/phderome), and [John](https://github.com/jdegoes) for helping me to write this post and for their mentoring.
