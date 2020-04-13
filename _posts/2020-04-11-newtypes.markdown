@@ -28,7 +28,7 @@ a + (b + c) === (a + b) + c
 ```
 This is an aspect of typeclasses we have not mentioned in the previous post. Each typeclass has specific laws that must be satisfied by its implementations (commonly called _instances_ in the functional programming jargon). There is no such thing as a lawless typeclass (otherwise it cannot be referred to as one).<br/>
 
-Back to our problem, when it comes to `Int`, there are two implementations possible to satisfy this associative law:
+Back to our problem, when it comes to `Int`, there are two possible implementations to satisfy this associative law:
 ```scala
 implicit val intSumAssociative    : Associative[Int] = _ + _
 implicit val intProductAssociative: Associative[Int] = _ * _
@@ -117,7 +117,7 @@ error: type mismatch;
  required: Int
 */
 ```
-As shown by this example, `Bar` and `Int` becomes distinct types even though they are the same. This is because `foo` is defined as a `Foo` and not a `FooImpl`. When refering to `Foo`, there is no way to prove that `Foo#Bar` points to `Int`. So `foo.b()` could technically return anything.
+As shown by this example, `Bar` and `Int` become distinct types even though they are the same. This is because `foo` is defined as a `Foo` and not a `FooImpl`. When referring to `Foo`, there is no way to prove that `Foo#Bar` points to `Int`. So `foo.b()` could technically return anything.
 
 ## The real newtype
 Using what we've just learnt, let's use a similar approach with `Newtype[A]`:
@@ -157,6 +157,8 @@ type Mult = Mult.WrappedType
 val m0: Mult = Mult.wrap(1) // compiles
 val m1: Int  = Mult.wrap(1) // compiles
 ```
+**Note**: We won't go through the `Subtype` facilities implementation to avoid going too much through similar code. You may refer to the complete code [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/io/github/francistoth/newtype).
+
 So far, in terms of memory allocation the only cost is the one implied by creating `Mult`. Wrapping a type to a `WrappedType` only consists of a function call with no extra allocation. This approach is therefore more contraining than a type alias but at least as efficient memory wise than using a value class.<br/>
 
 What about implicit resolution now? Can we declare two implementations of the `Associative` typeclass for, technically speaking, the same data type? To achieve this, we would need a bit more than just `wrap`:
@@ -230,7 +232,7 @@ sealed trait Newtype[A] {
   // ...
 }
 ```
-The API looks already beter:
+The API looks already better:
 ```scala
 val Mult: Newtype[Int] = NewtypeModule.newtype[Int]
 type Mult = Mult.WrappedType
@@ -250,7 +252,7 @@ To achieve this, `Mult` has to be an `object` implementing a `unapply` method:
 object Mult extends ???
 type Mult = Mult.WrappedType
 ```
-However, `Mult` can't extend `Newtype[Int]` otherwise Scala will establish a link between `Mult.WrappedType` and `Int` bringing us back to square one. `Newtype[Int]` should be therefore provided as a dependent type:
+However, `Mult` can't extend `Newtype[Int]` otherwise Scala will establish a link between `Mult.WrappedType` and `Int` bringing us back to square one. `Newtype[Int]` should therefore be provided as a dependent type:
 ```scala
 object Mult extends module.Newtype[Int]
 type Mult = Mult.WrappedType
