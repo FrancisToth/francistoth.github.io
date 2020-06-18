@@ -5,6 +5,7 @@ permalink: /talks/
 sidebar_link: true
 ---
 
+[Composition - Techno Drink 2020](20200615_composability/index.html)<br/>
 [Microservices - Techno Drink 2019](20191120_microservices/index.html)<br/>
 [Introduction to Functional Programming - Lambda Montreal 2017](http://francistoth.github.io/talks/old_format/intro_to_fp.html)<br/>
 [Spark 101 - Confoo 2016](http://francistoth.github.io/talks/old_format/spark_101.html)<br/>
