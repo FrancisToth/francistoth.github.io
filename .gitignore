@@ -12,3 +12,4 @@ project/target
 project/metals.sbt
 .bloop
 .metals
+.vscode
