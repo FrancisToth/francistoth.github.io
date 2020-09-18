@@ -211,7 +211,7 @@ run: A => Result
 ## References
 
 - [An Introduction to Functional Design](https://degoes.net/articles/functional-design) by John DeGoes
-- [Writing functional DSLs for business domains](https://medium.com/bigdatarepublic/writing-functional-dsls-for-business-domains-1bccc5d3f62b)
+- [Writing functional DSLs for business domains](https://medium.com/bigdatarepublic/writing-functional-dsls-for-business-domains-1bccc5d3f62b) by Ruurtjan Pul
 
 ---
 ## Thank you! / Questions? 
