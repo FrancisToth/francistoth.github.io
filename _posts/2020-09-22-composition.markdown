@@ -28,11 +28,11 @@ type Id = (String, String, Date)
 sealed trait Document
 object Document {
   /*
-   * Required by any person attempting to cross the border except in the case of
-   * a asylum request.
+   * Required by any person attempting to cross the border except 
+   * in the case of a asylum request.
    */
   final case class Passport(
-    uid: UID,         // A unique id tying all the papers belonging to the owner
+    uid: UID,         // A unique id tying a person's papers
     id: Id,           // The owner's identity
     expiration: Date, // the passport's expiration date
     foreign: Boolean  // tells if the passport is foreign or not
@@ -64,9 +64,9 @@ A `Result` states whether a person can cross the border or not (`Approved` or `D
 ```scala
 sealed trait Result
 object Result {
-  case object Approved extends Result // If the visitor can be let through
-  case object Denied   extends Result // If requirements are not met
-  case object Detained extends Result // If papers are forged
+  case object Approved extends Result // Visitor can be let through
+  case object Denied   extends Result // Requirements are not met
+  case object Detained extends Result // Papers are forged
   case object Aborted  extends Result // In case of a terrorist attack
 }
 ```
@@ -133,7 +133,7 @@ We currently have no way to combine results, and therefore need to add some mach
 sealed trait Result { self =>
   def &&(that: Result): Result =
     (self, that) match {
-      case (_, Aborted)  => that // the process has been aborted, do not proceed
+      case (_, Aborted)  => that // the process has been aborted
       case (Approved, _) => that // the left side is ok, keep proceeding
       case _             => self // the left side is not ok, do not proceed
     }
@@ -143,7 +143,7 @@ The citizen rule can be now built like this:
 ```scala
 object Rule {
   // ...
-  val citizen: Rule[(Date, Passport, IdCard)] = Rule { ctx => 
+  val citizen: Rule[(Date, Passport, IdCard)] = Rule { ctx =>
     case (now, passport, id) =>
       val result0 = citizenPassport.run(passport)
       val result1 = notExpired.run((passport.expiration, now))
@@ -154,19 +154,20 @@ object Rule {
 ```
 This leads us to a first best practice to make a DSL composable: **provide binary operators returning their inputs type**:
 ```scala
-(A, A) => A
+(A, A) => A
 ```
 This is exactly what we've done with `Result.&&` which takes two `Result`'s (`self` and `that`) and returns another `Result` combining them. This operator  helped us implementing the `citizen` but we can do better. To simplify the addition of other rules, we should also provide a combinator to `Rule` so that:
 ```scala
 // Pseudo code:
-val citizen = citizenPassport && passportNotExpired && passportMatchesIdCard
+val citizen = 
+  citizenPassport && passportNotExpired && passportMatchesIdCard
 ```
 Let's build this step by step. First we need to add the operator in question:
 ```scala
 case class Rule[A](run: A => Result) { self =>
   /* 
-   * Combines two rules and returns another one requiring a product of their 
-   * input
+   * Combines two rules and returns another one requiring a product 
+   * of their input
    */
   def &&[B](that: Rule[B]): Rule[(A, B)] = Rule {
     case (a, b) => self.run(a) && that.run(b)
@@ -191,10 +192,12 @@ In other words, as long as we know how to decompose an input `C` into a product 
 case class Rule[-A](run: A => Result) { self =>
   // ...
   /*
-   * Combines two rules respectfully requiring an `A` and a `B` into a rule
-   * requiring a `(A, B)`.
+   * Combines two rules respectfully requiring an `A` and a `B` 
+   * into a rule requiring a `(A, B)`.
    */
-  def bothWith[B, C](that: Rule[B])(f: C => (A, B)): Rule[C] = Rule { c =>
+  def bothWith[B, C](
+    that: Rule[B]
+  )(f: C => (A, B)): Rule[C] = Rule { c =>
     val (a, b) = f(c)
     self.run(a) && that.run(b)
   }
@@ -214,10 +217,12 @@ case class Rule[-A](run: A => Result) { self =>
     bothWith(that)(identity)
   
   /*
-   * Combines two rules respectfully requiring an `A` and a `B` into a rule
-   * requiring a product of A and B.
+   * Combines two rules respectfully requiring an `A` and a `B` 
+   * into a rule requiring a product of A and B.
    */
-  def bothWith[B, C](that: Rule[B])(f: C => (A, B)): Rule[C] = Rule { c =>
+  def bothWith[B, C](
+    that: Rule[B]
+  )(f: C => (A, B)): Rule[C] = Rule { c =>
     // As long as we know how to extract `A` et `B` from `C`, we can build
     // a `Rule[C]` from a `Rule[A]` and a `Rule[B]`
     val (a, b) = f(c)
@@ -248,8 +253,11 @@ We first combine `citizenPassport` and `notExpired` into a `Rule[(Passport, (Dat
  * entry permit
  */
 val foreigner: Rule[(Date, Passport, EntryPermit)] = {
-  val step1: Rule[(Passport, (Date, Date))] = foreignPassport && notExpired
-  val step2: Rule[(Passport, EntryPermit)]  = passportMatchesEntryPermit
+  val step1: Rule[(Passport, (Date, Date))] = 
+    foreignPassport && notExpired
+
+  val step2: Rule[(Passport, EntryPermit)]  = 
+    passportMatchesEntryPermit
 
   step1.bothWith(step2) {
     case (now, passport, permit) =>
@@ -301,10 +309,12 @@ Just like earlier we have too many redundancies in the resulting type and some r
 ```scala
 case class Rule[A](run: A => Result) { self =>
   /*
-   * Combines two rules respectfully requiring an `A` and a `B` into a rule
-   * requiring either an `A` or a `B`.
+   * Combines two rules respectfully requiring an `A` and a `B` 
+   * into a rule requiring either an `A` or a `B`.
    */
-  def eitherWith[B, C](that: Rule[B])(f: C => Either[A, B]): Rule[C] =
+  def eitherWith[B, C](
+    that: Rule[B]
+  )(f: C => Either[A, B]): Rule[C] =
     Rule { c =>
       f(c) match {
         case Left(a)  => self.run(a)
@@ -368,7 +378,8 @@ Rule(_ => Aborted)
 ```
 Secondly, combining `terroristAttack` with another rule should not change the type of the latter. So the combination of `terroristAttack` with `visitorRule` should have the same type than `visitorRule`. This can be implemented in different ways, using **contravariance** for example:
 ```scala
-case class Rule[-A](run: A => Result) { /* ... */ } // Note the - in front of A
+// Note the - in front of A
+case class Rule[-A](run: A => Result) { /* ... */ }
 val terroristAttack: Rule[Any] = Rule(_ => Aborted)
 ```
 Let's now encode the operator combining `visitor` with `terroristAttack`:
@@ -499,7 +510,9 @@ object Rule {
   final case object Refugee
     extends Rule[(GrantOfAsylum, FingerPrints)]
 
-  final case object PassportMatchesIdCard extends Rule[(Passport, IdCard)]
+  final case object PassportMatchesIdCard 
+    extends Rule[(Passport, IdCard)]
+
   final case object PassportMatchesEntryPermit 
     extends Rule[(Passport, EntryPermit)]
 
@@ -605,9 +618,9 @@ No matter the approach, we ended up using three types of block:
 - **operators**: which transform/combine solutions into other solutions (`eitherWith`, `bothWith`, ...).
 
 As explained by [John DeGoes](https://github.com/jdegoes) and [Ruurtjan Pul](https://github.com/ruurtjan) in this [post](https://medium.com/bigdatarepublic/writing-functional-dsls-for-business-domains-1bccc5d3f62b), there are some best practices regarding how **primitives** should be designed:
-> - Composable: to build complex solutions using simple components;<br/>
-> - Orthogonal: such that there’s no overlap in capabilities between primitives;<br/>
-> - Minimal: in terms of the number of primitives.<br/>
+>- Composable: to build complex solutions using simple components;<br/>
+>- Orthogonal: such that there’s no overlap in capabilities between primitives;<br/>
+>- Minimal: in terms of the number of primitives.<br/>
 
 Secondly, in terms of encoding, we first embedded the evaluation function within the resulting data-structure. Later on we decided to put it apart and use pure data-structures only. The first type of encoding is referred to as an **executable encoding**. It implies that _every constructor and operators of the model is expressed in terms of its execution_. It's defined in opposition with the **declarative encoding** used in the second implementation, _where every **constructor** and **operator** of the model is expressed as pure data in a recursive tree structure_. 
 
