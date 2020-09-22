@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  “Composition”
+title:  Composition
 date:   2020-09-22 08:51:48 -0500
 brief:
 ---
