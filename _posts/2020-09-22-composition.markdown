@@ -7,7 +7,7 @@ brief:
 
 **An efficient software design is one allowing its components to be separated and recombined without introducing unexpected behaviors**. This topic has been tackled over and over in the past and different approaches like the [SOLID principles](https://en.wikipedia.org/wiki/SOLID) or the [GOF patterns](https://en.wikipedia.org/wiki/Design_Patterns) eventually came up to address this problem. Despite their value, these tend to confuse many software developers however. Taken separately, they may indeed sound incomplete and often fail to convey what ties them all together.
 
-If we look at this from a higher perspective, they all share the same goal: **Making it easy the introduction of new business requirements or the modification of existing ones, while preserving certain properties**. In other words: **Composition**. In this post, we'll look at some simple composition techniques along with some of the perspectives they offer in terms of design.
+If we look at this from a higher perspective, they all share the same goal: **Making it easier to introduce new business requirements and modify existing ones, while preserving certain properties**. In other words: **Composition**. In this post, we'll look at some simple composition techniques along with some of the perspectives they offer in terms of design.
 
 ## Papers, please
 
@@ -187,12 +187,12 @@ In order to run this rule, we would have to provide a tuple containing the passp
 ```scala
 def bothWith[B, C](that: Rule[B])(f: C => (A, B)): Rule[C] = ???
 ```
-In other words, as long as we know how to decompose an input `C` into a product of `A` and `B`, we can combine two rules taking respectfully an `A` and a `B`. The implementation happens to be quite straightforward:
+In other words, as long as we know how to decompose an input `C` into a product of `A` and `B`, we can combine two rules taking respectively an `A` and a `B`. The implementation happens to be quite straightforward:
 ```scala
 case class Rule[-A](run: A => Result) { self =>
   // ...
   /*
-   * Combines two rules respectfully requiring an `A` and a `B` 
+   * Combines two rules respectively requiring an `A` and a `B`
    * into a rule requiring a `(A, B)`.
    */
   def bothWith[B, C](
@@ -205,7 +205,7 @@ case class Rule[-A](run: A => Result) { self =>
 ```
 As a matter of fact, `&&` can be expressed in terms of `bothWith` making it a **derived operator**:
 ```scala
-case class Rule[-A](run: A => Result) { self =>
+case class Rule[A](run: A => Result) { self =>
   /*
    * Alias for `both`
    */
@@ -217,7 +217,7 @@ case class Rule[-A](run: A => Result) { self =>
     bothWith(that)(identity)
   
   /*
-   * Combines two rules respectfully requiring an `A` and a `B` 
+   * Combines two rules respectively requiring an `A` and a `B`
    * into a rule requiring a product of A and B.
    */
   def bothWith[B, C](
@@ -231,7 +231,7 @@ case class Rule[-A](run: A => Result) { self =>
 }
 ```
 
-`bothWith` is one of the typical composition patterns you may come across while writing composable software. It fits well with data-structures being invariant or **contravariant** in `A`, that is which provide functions taking/consuming `A`'s. `bothWith`  happens to be the solution required to model the citizen rule:
+`bothWith` is one of the typical composition patterns you may come across while writing composable software. It fits well with data-structures being [**invariant** or **contravariant**](https://contramap.dev/2020/02/12/variance.html) in `A`, that is which provide functions taking/consuming `A`'s. `bothWith`  happens to be the solution required to model the citizen rule:
 ```scala
 /*
  * A citizen must provide a non-expired passport along with a matching
@@ -309,7 +309,7 @@ Just like earlier we have too many redundancies in the resulting type and some r
 ```scala
 case class Rule[A](run: A => Result) { self =>
   /*
-   * Combines two rules respectfully requiring an `A` and a `B` 
+   * Combines two rules respectively requiring an `A` and a `B`
    * into a rule requiring either an `A` or a `B`.
    */
   def eitherWith[B, C](
@@ -323,7 +323,7 @@ case class Rule[A](run: A => Result) { self =>
     }
 }
 ```
-In other words, as long as we know how to convert an input `C` into an either of `A` and `B`, we can combine two rules taking respectfully an `A` and a `B`. Just like `bothWith`, `eitherWith` happens to be a primary operator from which `||` is derived:
+In other words, as long as we know how to convert an input `C` into an either of `A` and `B`, we can combine two rules taking respectively an `A` and a `B`. Just like `bothWith`, `eitherWith` happens to be a primary operator from which `||` is derived:
 ```scala
 case class Rule[-A](run: A => Result) { self =>
   /*
@@ -340,7 +340,7 @@ case class Rule[-A](run: A => Result) { self =>
 }
 ```
 
-`eitherWith` is another typical composition pattern you may come across while writing composable software. It fits well with data-structures being invariant or **covariant** in `A`, that is which provide functions returning/producing `A`'s. This new operator happens to be exactly what we need to compose the visitor rule:
+`eitherWith` is another typical composition pattern you may come across while writing composable software. It fits well with data-structures being [**invariant** or **covariant**](https://contramap.dev/2020/02/12/variance.html) in `A`, that is which provide functions returning/producing `A`'s. This new operator happens to be exactly what we need to compose the visitor rule:
 ```scala
 /*
  * A visitor other than a refugee must either:
@@ -356,7 +356,7 @@ val visitor: Rule[(Date, Passport, IdCard || EntryPermit)] =
 
 ## Sum and Product composition
 
-You may notice a certain similarity between `bothWith` and `eitherWith`. This is not surprising, as they both define two kinds of composition patterns respectfully known as **product composition** and **sum composition**:
+You may notice a certain similarity between `bothWith` and `eitherWith`. This is not surprising, as they both define two kinds of composition patterns respectively known as **product composition** and **sum composition**:
 ```scala
 def bothWith[B, C]  (that: Rule[B])(f: C => (A, B)): Rule[C] = /* ... */
 
@@ -464,7 +464,7 @@ val game: Rule[Visitor || Refugee] =
 
 ## Going further
 
-Is that it? Well, actually there's more we can talk about regarding this topic So far we represented every terms of our DSL using a simple function:
+Is that it? Well, actually there's more we can talk about regarding this topic. So far we represented every terms of our DSL using a simple function:
 ```scala
 A => Result
 ```
@@ -624,7 +624,7 @@ As explained by [John DeGoes](https://github.com/jdegoes) and [Ruurtjan Pul](htt
 >- Orthogonal: such that there’s no overlap in capabilities between primitives;<br/>
 >- Minimal: in terms of the number of primitives.<br/>
 
-Secondly, in terms of encoding, we first embedded the evaluation function within the resulting data-structure. Later on we decided to put it apart and use pure data-structures only. The first type of encoding is referred to as an **executable encoding**. It implies that _every constructor and operators of the model is expressed in terms of its execution_. It's defined in opposition with the **declarative encoding** used in the second implementation, _where every **constructor** and **operator** of the model is expressed as pure data in a recursive tree structure_. 
+Secondly, in terms of encoding, we first embedded the evaluation function within the resulting data-structure. Later on we decided to pull it apart and use pure data-structures only. The first type of encoding is referred to as an **executable encoding**. It implies that _every constructor and operators of the model is expressed in terms of its execution_. It's defined in opposition with the **declarative encoding** used in the second implementation, _where every **constructor** and **operator** of the model is expressed as pure data in a recursive tree structure_.
 
 Both types of encoding have their trade-offs. With an **executable encoding**, adding new constructors and operators is easy, as they are all defined using the same function, while adding new evaluation functions is harder, as it potentially requires changing every operator and constructors of the DSL. It's the exact opposite with a **declarative encoding** where adding new evaluation functions is easy (as these are defined separately), but adding new constructors and operators is painful. You may recognize the [expression problem](https://en.wikipedia.org/wiki/Expression_problem) here which is the very reason why Object Oriented Programming and Functional Programming exist.
 

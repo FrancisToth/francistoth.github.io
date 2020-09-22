@@ -81,7 +81,7 @@ object PapersPlease {
       bothWith(that)(identity)
 
     /*
-     * Combines two rules respectfully requiring an `A` and a `B` into a rule
+     * Combines two rules respectively requiring an `A` and a `B` into a rule
      * requiring a `(A, B)`.
      */
     def bothWith[B, C](that: Rule[B])(f: C => (A, B)): Rule[C] = Rule { c =>
@@ -104,7 +104,7 @@ object PapersPlease {
       eitherWith(that)(identity)
 
     /*
-     * Combines two rules respectfully requiring an `A` and a `B` into a rule
+     * Combines two rules respectively requiring an `A` and a `B` into a rule
      * requiring either an `A` or a `B`.
      */
     def eitherWith[B, C](that: Rule[B])(f: C => Either[A, B]): Rule[C] =
