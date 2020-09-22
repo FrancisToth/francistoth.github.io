@@ -133,9 +133,9 @@ We currently have no way to combine results, and therefore need to add some mach
 sealed trait Result { self =>
   def &&(that: Result): Result =
     (self, that) match {
-      case (_, Aborted)  => that // the process has been aborted
-      case (Approved, _) => that // the left side is ok, keep proceeding
-      case _             => self // the left side is not ok, do not proceed
+      case (_, Aborted)  => that // process has been aborted
+      case (Approved, _) => that // left side is ok, keep proceeding
+      case _             => self // left side is not ok, do not proceed
     }
 }
 ```
@@ -223,8 +223,8 @@ case class Rule[-A](run: A => Result) { self =>
   def bothWith[B, C](
     that: Rule[B]
   )(f: C => (A, B)): Rule[C] = Rule { c =>
-    // As long as we know how to extract `A` et `B` from `C`, we can build
-    // a `Rule[C]` from a `Rule[A]` and a `Rule[B]`
+    // As long as we know how to extract `A` et `B` from `C`, 
+    // we can build a `Rule[C]` from a `Rule[A]` and a `Rule[B]`
     val (a, b) = f(c)
     self.run(a) && that.run(b)
   }
@@ -544,7 +544,9 @@ sealed trait DSL[-A, F[_]] { self =>
   def &&[B](that: DSL[B, F]): DSL[(A, B), F] =
     bothWith(that)(identity)
 
-  def eitherWith[B, C](that: DSL[B, F])(f: C => Either[A, B]): DSL[C, F] =
+  def eitherWith[B, C](
+    that: DSL[B, F]
+  )(f: C => Either[A, B]): DSL[C, F] =
     EitherWith(self, that, f)
 
   def ||[B](that: DSL[B, F]): DSL[Either[A, B], F] =
