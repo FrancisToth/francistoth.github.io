@@ -619,7 +619,7 @@ No matter the approach, we ended up using three types of block:
 - **constructors**: which build solutions from existing solutions (`citizen`, `foreigner`, ...)
 - **operators**: which transform/combine solutions into other solutions (`eitherWith`, `bothWith`, ...).
 
-As explained by [John DeGoes](https://github.com/jdegoes) and [Ruurtjan Pul](https://github.com/ruurtjan) in this [post](https://medium.com/bigdatarepublic/writing-functional-dsls-for-business-domains-1bccc5d3f62b), there are some best practices regarding how **primitives** should be designed:
+As explained by [John DeGoes](https://github.com/jdegoes) and [Ruurtjan Pul](https://ruurtjan.com/) in this [post](https://medium.com/bigdatarepublic/writing-functional-dsls-for-business-domains-1bccc5d3f62b), there are some best practices regarding how **primitives** should be designed:
 >- Composable: to build complex solutions using simple components;<br/>
 >- Orthogonal: such that there’s no overlap in capabilities between primitives;<br/>
 >- Minimal: in terms of the number of primitives.<br/>
