@@ -11,7 +11,7 @@ sidebar_link: true
   <br/><br/>
   Works at <a href="http://www.contramap.dev">Contramap</a>, a Canadian consulting company providing technical expertise regarding functional programming, reactive system design and training, through talks, blog posts, open-source contributions, and development.
   <br/><br/>
-  Also gives presentations at various events, play the guitar, love music and outdoor activities.
+  Also gives presentations at various events, plays the guitar, loves music and outdoor activities.
   <br/><br/>
   Scala, Akka, ZIO, Cats, Java, Haskell, Object Oriented / Functional Programming, Reactive Architectures, AWS</p>
 </div>
