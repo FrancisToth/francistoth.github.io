@@ -7,11 +7,13 @@ sidebar_link: true
 
 <div class="overflow: auto;">
   <img style="float: left;margin-right:40px;" src="/images/avatar.jpg" width="200" height="200">
-  <p style="text-align:justify; text-justify: inter-word;">I am a software developer, convinced agilist and trainer with over 14 years experience developing highly scalable web/mobile/backend applications, optimizing work processes and leading dev teams. I am currently interested by Functional Programming, DevOps, and distributed systems. I also give presentations at various events, play the guitar, love music and Taekwondo.
+  <p style="text-align:justify; text-justify: inter-word;">Software developer, convinced agilist and trainer with over 15 years experience developing highly scalable web/mobile/backend applications, optimizing work processes and leading dev teams. Currently interested in software design in general, Functional Programming (Scala, ZIO, Cats, Haskell,...), type-level programming, concurrency and distributed systems.
   <br/><br/>
-  I currently work at <a href="http://www.yoppworks.com">Yoppworks</a> as a Lead Consultant.
+  Work at <a href="http://www.contramap.dev">Contramap</a>, a Canadian consulting company providing technical expertise regarding functional programming, reactive system design and training, through talks, blog posts, open-source contributions, and development.
   <br/><br/>
-  Scala, Akka, Spark, ZIO, Cats, Java, Haskell, Object Oriented / Functional Programming, Reactive Architectures, Terraform, AWS</p>
+  Also give presentations at various events, play the guitar, love music and outdoor activities.
+  <br/><br/>
+  Scala, Akka, ZIO, Cats, Java, Haskell, Object Oriented / Functional Programming, Reactive Architectures, AWS</p>
 </div>
 <div class="overflow: auto;">
   <b>People I like to work with:</b>
