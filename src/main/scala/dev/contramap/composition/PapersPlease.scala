@@ -237,6 +237,7 @@ object PapersPlease {
      * - it should abort the game if the checkpoint is under assault
      */
     type Refugee = (GrantOfAsylum, FingerPrints)
+    type Visitor = (Date, Passport, IdCard || EntryPermit)
 
     val game: Rule[Visitor || Refugee] =
       (visitor || refugee).orElse(terroristAttack)
