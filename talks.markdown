@@ -6,7 +6,7 @@ sidebar_link: true
 ---
 
 [How I learned to stop worrying and love Functional Design - 2020](20201022_hlswlfd/index.html)<br/>
-[Composition - 2020](20200916_composition_revisited/index.html)<br/>
+[Composition (live coding) - 2020](20200916_composition_revisited/index.html)<br/>
 [Composition - 2020](20200615_composability/index.html)<br/>
 [Microservices - 2019](20191120_microservices/index.html)<br/>
 [Introduction to Functional Programming - 2017](http://francistoth.github.io/talks/old_format/intro_to_fp.html)<br/>
