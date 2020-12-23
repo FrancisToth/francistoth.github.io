@@ -1,0 +1,216 @@
+<!-- Head custom content area start -->
+<!--
+Insert any custom code (web-analytics, resources, etc.) - it will appear in the <head></head> section of every page. Can be overwritten by partial with the same name in the global layouts.
+-->
+
+<script>
+    function openCity(evt, cityName, ref) {
+        var i = 0;
+        var bar = ref.parentElement;
+        var tab = ref.parentElement.parentElement;
+
+        var tabs = tab.getElementsByClassName("city");
+        for (i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+            if (tabs[i].id == cityName)
+                tabs[i].style.display = "block";
+        }
+
+        var tablinks = bar.getElementsByClassName("tablink");
+        for (i = 0; i < tabs.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" white0", "");
+        }
+        evt.currentTarget.className += " white0";
+    }
+
+// https://highlightjs.readthedocs.io/en/latest/language-guide.html
+hljs.registerLanguage("scala", function(e) {
+  return {   
+    k: {
+      keyword: 'type yield lazy override def with val var sealed abstract private trait object if forSome for while throw finally protected extends import final return else break new catch super class case package default try this match continue throws implicit',
+      literal: 'true false null'
+    },
+    c: [
+        hljs.QUOTE_STRING_MODE,
+        hljs.COMMENT(
+          "//",      // begin regex
+          "*"        // end regex
+        ),
+        hljs.COMMENT(
+          "/\*",      // begin regex
+          "\*/"        // end regex
+        )
+      ]
+  }
+});
+
+// hljs.registerLanguage("scala", function(e) {
+//   var t = {
+//       cN: "annotation",
+//       b: "@[A-Za-z]+"
+//     },
+//     a = {
+//       cN: "string",
+//       b: 'u?r?"""',
+//       e: '"""',
+//       r: 10
+//     },
+//     r = {
+//       cN: "symbol",
+//       b: "'\\w[\\w\\d_]*(?!')"
+//     },
+//     c = {
+//       cN: "type",
+//       b: "\\b[A-Z][A-Za-z0-9_]*",
+//       r: 0
+//     },
+//     i = {
+//       cN: "title",
+//       b: /[^0-9\n\t "'(),.`{}\[\]:;][^\n\t "'(),.`{}\[\]:;]+|[^0-9\n\t "'(),.`{}\[\]:;=]/,
+//       r: 0
+//     },
+//     l = {
+//       cN: "class",
+//       bK: "class object trait type",
+//       e: /[:={\[(\n;]/,
+//       c: [{
+//         cN: "keyword",
+//         bK: "extends with",
+//         r: 10
+//       }, i]
+//     },
+//     n = {
+//       cN: "function",
+//       bK: "def val",
+//       e: /[:={\[(\n;]/,
+//       c: [i]
+//     };
+//   return {
+//     k: {
+//       literal: "true false null",
+//       keyword: "type yield lazy override def with val var sealed abstract private trait object if forSome for while throw finally protected extends import final return else break new catch super class case package default try this match continue throws implicit"
+//     },
+//     c: [e.CLCM, e.CBCM, a, e.QSM, r, c, n, l, e.CNM, t]
+//   }
+// });
+</script>
+<style>
+
+    .dark {
+        --hljs-bg: rgb(30, 40, 45);
+    }
+    .post-content .highlight,
+    .post-content pre {
+        margin-left: 0;
+        margin-right: 0;
+        background: var(--hljs-bg) !important;
+        border-radius: var(--radius);
+        background-color: rgb(30, 40, 45) !important;
+    }
+    .btn {
+        -webkit-border-radius: 5;
+        -moz-border-radius: 5;
+        border-radius: 5px;
+        font-family: Arial;
+        color: #ffffff;
+        font-size: 13px;
+        padding: 2px 7px 2px 7px;
+        text-decoration: none;
+    }
+
+    /* .btn:hover {
+        background: #68899e;
+        text-decoration: none;
+    }
+
+    .btn:active {
+        background: #4398cc;
+        text-decoration: none;
+    } */
+
+    
+    .grey0 {
+        background: #8a8a8a;
+    }
+    
+    .white0 {
+        background: #68899e;
+    }
+
+    .dark {
+    --hljs-bg: #263238;
+    }
+
+    .post-content code {
+        font-family: Hack, monospace !important;
+    }
+
+    .first-entry {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 0px;
+        margin: var(--gap) 0 calc(var(--gap) * 2) 0;
+        margin-bottom: 0;
+    }
+
+.highlight .hll { background-color: #ffffcc }
+.highlight  { background: rgb(30, 40, 45); }
+.highlight .c { color: #546E7A; font-style: italic } /* Comment */
+.highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
+.highlight .k { color:rgb(194, 136, 232);  } /* Keyword */
+.hljs-keyword { color:rgb(194, 136, 232);  } /* Keyword */
+
+.highlight .ch { color: #546E7A; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: rgb(167, 159, 148); font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #546E7A } /* Comment.Preproc */
+.highlight .cpf { color: #546E7A; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: rgb(167, 159, 148); font-style: italic } /* Comment.Single */
+.highlight .cs { color: #546E7A; font-weight: bold } /* Comment.Special */
+.highlight .gd { color: #000000; background-color: #ffdddd } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #aa0000 } /* Generic.Error */
+.highlight .gh { color: #999999 } /* Generic.Heading */
+.highlight .gi { color: #000000; background-color: #ddffdd } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #555555 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #aaaaaa } /* Generic.Subheading */
+.highlight .gt { color: #aa0000 } /* Generic.Traceback */
+.highlight .kc { color: #F77669; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: rgba(233, 237, 237, 1); font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #000080; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #000080; font-weight: bold } /* Keyword.Pseudo */
+.highlight .kr { color: #000080; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: rgb(127, 174, 255); } /* Keyword.Type */
+.highlight .m { color: #F77669 } /* Literal.Number */
+.highlight .s { color: rgb(195, 232, 141) } /* Literal.String */
+.highlight .n { color: rgba(233, 237, 237, 1); } /* Name.Attribute */
+.highlight .na { color: #FF0000 } /* Name.Attribute */
+.highlight .nc { color: rgba(233, 237, 237, 1); } /* Name.Attribute */
+.highlight .nt { color: #000080; font-weight: bold } /* Name.Tag */
+.highlight .ow { font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #0000FF } /* Literal.Number.Bin */
+.highlight .mf { color: #0000FF } /* Literal.Number.Float */
+.highlight .mh { color: #0000FF } /* Literal.Number.Hex */
+.highlight .mi { color:rgb(247, 118, 105) } /* Literal.Number.Integer */
+.highlight .mo { color: #0000FF } /* Literal.Number.Oct */
+.highlight .sa { color: #0000FF } /* Literal.String.Affix */
+.highlight .sb { color: #0000FF } /* Literal.String.Backtick */
+.highlight .sc { color: #800080 } /* Literal.String.Char */
+.highlight .dl { color: #0000FF } /* Literal.String.Delimiter */
+.highlight .sd { color: #0000FF } /* Literal.String.Doc */
+.highlight .s2 { color: #0000FF } /* Literal.String.Double */
+.highlight .se { color: #0000FF } /* Literal.String.Escape */
+.highlight .sh { color: #0000FF } /* Literal.String.Heredoc */
+.highlight .si { color: #0000FF } /* Literal.String.Interpol */
+.highlight .sx { color: #0000FF } /* Literal.String.Other */
+.highlight .sr { color: #0000FF } /* Literal.String.Regex */
+.highlight .s1 { color: #0000FF } /* Literal.String.Single */
+.highlight .ss { color: #0000FF } /* Literal.String.Symbol */
+.highlight .il { color: #0000FF } /* Literal.Number.Integer.Long */
+
+</style>
+<!-- Head custom content area end -->

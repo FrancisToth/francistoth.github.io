@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Talks | Francis Toth / Contramap</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="Functional Design -Code Mesh 2020
+  Functional Design -Explore Functional Programming 2020
+  Composition (in practice) - Scala Toronto 2020
+  Composition - Techno Drink 2020
+  Microservices - Techno Drink 2019
+  Introduction to Functional Programming - Ottawa Scala meetup 2017
+  Introduction to Functional Programming - Scalator 2017
+  Introduction to Functional Programming - Lambda Montreal 2017
+  Spark 101 - Scala Montreal 2016">
+<meta name="author" content="">
+<link rel="canonical" href="https://www.contramap.dev/talks/" />
+<link href="https://www.contramap.dev/assets/css/stylesheet.min.d1bc2b736056bd5698d770eeedc08a73bce9e6cebb30810f6f1b2c2048e46ab8.css" integrity="sha256-0bwrc2BWvVaY13Du7cCKc7zp5s67MIEPbxssIEjkarg=" rel="preload stylesheet"
+    as="style">
+
+<link rel="icon" href="https://www.contramap.dev/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.contramap.dev/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.contramap.dev/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.contramap.dev/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.contramap.dev/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.68.3" />
+
+
+
+<script>
+    function openCity(evt, cityName, ref) {
+        var i = 0;
+        var bar = ref.parentElement;
+        var tab = ref.parentElement.parentElement;
+
+        var tabs = tab.getElementsByClassName("city");
+        for (i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+            if (tabs[i].id == cityName)
+                tabs[i].style.display = "block";
+        }
+
+        var tablinks = bar.getElementsByClassName("tablink");
+        for (i = 0; i < tabs.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" white0", "");
+        }
+        evt.currentTarget.className += " white0";
+    }
+
+
+hljs.registerLanguage("scala", function(e) {
+  return {   
+    k: {
+      keyword: 'type yield lazy override def with val var sealed abstract private trait object if forSome for while throw finally protected extends import final return else break new catch super class case package default try this match continue throws implicit',
+      literal: 'true false null'
+    },
+    c: [
+        hljs.QUOTE_STRING_MODE,
+        hljs.COMMENT(
+          "//",      
+          "*"        
+        ),
+        hljs.COMMENT(
+          "/\*",      
+          "\*/"        
+        )
+      ]
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<style>
+
+    .dark {
+        --hljs-bg: rgb(30, 40, 45);
+    }
+    .post-content .highlight,
+    .post-content pre {
+        margin-left: 0;
+        margin-right: 0;
+        background: var(--hljs-bg) !important;
+        border-radius: var(--radius);
+        background-color: rgb(30, 40, 45) !important;
+    }
+    .btn {
+        -webkit-border-radius: 5;
+        -moz-border-radius: 5;
+        border-radius: 5px;
+        font-family: Arial;
+        color: #ffffff;
+        font-size: 13px;
+        padding: 2px 7px 2px 7px;
+        text-decoration: none;
+    }
+
+     
+
+    
+    .grey0 {
+        background: #8a8a8a;
+    }
+    
+    .white0 {
+        background: #68899e;
+    }
+
+    .dark {
+    --hljs-bg: #263238;
+    }
+
+    .post-content code {
+        font-family: Hack, monospace !important;
+    }
+
+    .first-entry {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 0px;
+        margin: var(--gap) 0 calc(var(--gap) * 2) 0;
+        margin-bottom: 0;
+    }
+
+.highlight .hll { background-color: #ffffcc }
+.highlight  { background: rgb(30, 40, 45); }
+.highlight .c { color: #546E7A; font-style: italic }  
+.highlight .err { color: #a61717; background-color: #e3d2d2 }  
+.highlight .k { color:rgb(194, 136, 232);  }  
+.hljs-keyword { color:rgb(194, 136, 232);  }  
+
+.highlight .ch { color: #546E7A; font-style: italic }  
+.highlight .cm { color: rgb(167, 159, 148); font-style: italic }  
+.highlight .cp { color: #546E7A }  
+.highlight .cpf { color: #546E7A; font-style: italic }  
+.highlight .c1 { color: rgb(167, 159, 148); font-style: italic }  
+.highlight .cs { color: #546E7A; font-weight: bold }  
+.highlight .gd { color: #000000; background-color: #ffdddd }  
+.highlight .ge { font-style: italic }  
+.highlight .gr { color: #aa0000 }  
+.highlight .gh { color: #999999 }  
+.highlight .gi { color: #000000; background-color: #ddffdd }  
+.highlight .go { color: #888888 }  
+.highlight .gp { color: #555555 }  
+.highlight .gs { font-weight: bold }  
+.highlight .gu { color: #aaaaaa }  
+.highlight .gt { color: #aa0000 }  
+.highlight .kc { color: #F77669; font-weight: bold }  
+.highlight .kd { color: rgba(233, 237, 237, 1); font-weight: bold }  
+.highlight .kn { color: #000080; font-weight: bold }  
+.highlight .kp { color: #000080; font-weight: bold }  
+.highlight .kr { color: #000080; font-weight: bold }  
+.highlight .kt { color: rgb(127, 174, 255); }  
+.highlight .m { color: #F77669 }  
+.highlight .s { color: rgb(195, 232, 141) }  
+.highlight .n { color: rgba(233, 237, 237, 1); }  
+.highlight .na { color: #FF0000 }  
+.highlight .nc { color: rgba(233, 237, 237, 1); }  
+.highlight .nt { color: #000080; font-weight: bold }  
+.highlight .ow { font-weight: bold }  
+.highlight .w { color: #bbbbbb }  
+.highlight .mb { color: #0000FF }  
+.highlight .mf { color: #0000FF }  
+.highlight .mh { color: #0000FF }  
+.highlight .mi { color:rgb(247, 118, 105) }  
+.highlight .mo { color: #0000FF }  
+.highlight .sa { color: #0000FF }  
+.highlight .sb { color: #0000FF }  
+.highlight .sc { color: #800080 }  
+.highlight .dl { color: #0000FF }  
+.highlight .sd { color: #0000FF }  
+.highlight .s2 { color: #0000FF }  
+.highlight .se { color: #0000FF }  
+.highlight .sh { color: #0000FF }  
+.highlight .si { color: #0000FF }  
+.highlight .sx { color: #0000FF }  
+.highlight .sr { color: #0000FF }  
+.highlight .s1 { color: #0000FF }  
+.highlight .ss { color: #0000FF }  
+.highlight .il { color: #0000FF }  
+
+</style>
+<meta property="og:title" content="Talks" />
+<meta property="og:description" content="Functional Design -Code Mesh 2020
+  Functional Design -Explore Functional Programming 2020
+  Composition (in practice) - Scala Toronto 2020
+  Composition - Techno Drink 2020
+  Microservices - Techno Drink 2019
+  Introduction to Functional Programming - Ottawa Scala meetup 2017
+  Introduction to Functional Programming - Scalator 2017
+  Introduction to Functional Programming - Lambda Montreal 2017
+  Spark 101 - Scala Montreal 2016" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.contramap.dev/talks/" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Talks"/>
+<meta name="twitter:description" content="Functional Design -Code Mesh 2020
+  Functional Design -Explore Functional Programming 2020
+  Composition (in practice) - Scala Toronto 2020
+  Composition - Techno Drink 2020
+  Microservices - Techno Drink 2019
+  Introduction to Functional Programming - Ottawa Scala meetup 2017
+  Introduction to Functional Programming - Scalator 2017
+  Introduction to Functional Programming - Lambda Montreal 2017
+  Spark 101 - Scala Montreal 2016"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Talks",
+  "name": "Talks",
+  "description": "Functional Design -Code Mesh 2020\n  Functional Design -Explore Functional Programming 2020\n  Composition (in practice) - Scala Toronto 2020\n  Composition - Techno Drink 2020 …",
+  "keywords": [
+    
+  ],
+  "articleBody": "  Functional Design -Code Mesh 2020\n  Functional Design -Explore Functional Programming 2020\n  Composition (in practice) - Scala Toronto 2020\n  Composition - Techno Drink 2020\n  Microservices - Techno Drink 2019\n  Introduction to Functional Programming - Ottawa Scala meetup 2017\n  Introduction to Functional Programming - Scalator 2017\n  Introduction to Functional Programming - Lambda Montreal 2017\n  Spark 101 - Scala Montreal 2016\n  Spark 101 - Confoo 2016\n  Scala 101 - Confoo 2016\n  Buck - DroidCon Montreal 2015\n  Modularity in Android - Android Montreal 2013\n  Android best practices - Android Montreal 2013\n  Testing Android - Confoo 2012\n  ",
+  "wordCount" : "92",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.contramap.dev/talks/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Francis Toth / Contramap",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.contramap.dev/favicon.ico"
+    }
+  }
+}
+</script>
+
+
+
+</head>
+
+<body class=" dark">
+<noscript>
+    <style type="text/css">
+        .theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.contramap.dev/" accesskey="h" title="Francis Toth / Contramap (Alt + H)">Francis Toth / Contramap</a>
+            <span class="logo-switches">
+                
+            </span>
+        </div>
+        <ul class="menu" id="menu" onscroll="menu_on_scroll()">
+            <li>
+                <a href="https://www.contramap.dev/about/" title="about">
+                    <span>about</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.contramap.dev/talks/" title="talks">
+                    <span class="active">talks</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.contramap.dev/cv/" title="resume">
+                    <span>resume</span>
+                </a>
+            </li><li>
+                <a style="display: inline;" target="_blank" href="https://twitter.com/francistoth?lang=en">
+                    <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" style="height: 20px; width: 30px; fill: currentColor; transition: transform .1s">
+                        <path
+                            d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+                    </svg>
+                </a>
+                <a style="display: inline;" target="_blank" href="https://ca.linkedin.com/in/francistoth/en-us">
+                    <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" style="height: 20px; width: 30px; fill: currentColor; transition: transform .1s">
+                        <path
+                            d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+                    </svg>
+                </a>
+                <a style="display: inline;" target="_blank" href="https://github.com/FrancisToth">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round", style="height: 20px; width: 30px; fill: currentColor; transition: transform .1s">
+                        <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                        </path>
+                    </svg>
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</header>
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+      Talks
+    </h1>
+    <div class="post-meta">
+
+    </div>
+  </header> 
+
+  <div class="post-content">
+<ul>
+<li>
+<p><a href="/talks_data/20200916_composition_revisited/index.html">Functional Design -Code Mesh 2020</a></p>
+</li>
+<li>
+<p><a href="/talks_data/20200916_composition_revisited/index.html">Functional Design -Explore Functional Programming 2020</a></p>
+</li>
+<li>
+<p><a href="/talks_data/20200916_composition_revisited/index.html">Composition (in practice) - Scala Toronto 2020</a></p>
+</li>
+<li>
+<p><a href="/talks_data/20200615_composability/index.html">Composition - Techno Drink 2020</a></p>
+</li>
+<li>
+<p><a href="talks_data/20191120_microservices/index.html">Microservices - Techno Drink 2019</a></p>
+</li>
+<li>
+<p><a href="/talks_data/old_format/intro_to_fp.html">Introduction to Functional Programming - Ottawa Scala meetup 2017</a></p>
+</li>
+<li>
+<p><a href="/talks_data/old_format/intro_to_fp.html">Introduction to Functional Programming - Scalator 2017</a></p>
+</li>
+<li>
+<p><a href="/talks_data/old_format/intro_to_fp.html">Introduction to Functional Programming - Lambda Montreal 2017</a></p>
+</li>
+<li>
+<p><a href="/talks_data/old_format/spark_101.html">Spark 101 - Scala Montreal 2016</a></p>
+</li>
+<li>
+<p><a href="/talks_data/old_format/spark_101.html">Spark 101 - Confoo 2016</a></p>
+</li>
+<li>
+<p><a href="/talks_data/old_format/scala_101.html">Scala 101 - Confoo 2016</a></p>
+</li>
+<li>
+<p><a href="http://slides.com/tothfrancis/introduction-to-buck/fullscreen#/">Buck - DroidCon Montreal 2015</a></p>
+</li>
+<li>
+<p><a href="https://prezi.com/jfruyhemc9uh/android-montreal-best-practices-modularity/">Modularity in Android - Android Montreal 2013</a></p>
+</li>
+<li>
+<p><a href="https://prezi.com/f2vue-ba2ybp/confoo-2013-android-best-practices/">Android best practices - Android Montreal 2013</a></p>
+</li>
+<li>
+<p><a href="https://prezi.com/-m4rprzvgs1p/confoo-2012-testing-android-apps/">Testing Android - Confoo 2012</a></p>
+</li>
+</ul>
+
+</div>
+  <footer class="post-footer">
+  </footer>
+</article>
+    </main><footer class="footer">
+    <span>&copy; 2020 <a href="https://www.contramap.dev/">Francis Toth / Contramap</a></span>
+    <span>&middot;</span>
+    <span>Powered by <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></span>
+    <span>&middot;</span>
+    <span>Theme <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a></span>
+</footer>
+<button class="top-link" id="top-link" type="button" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6">
+        <path d="M12 6H0l6-6z" /></svg>
+</button>
+
+
+
+<script>
+    window.onload = function () {
+        if (localStorage.getItem("menu-scroll-position")) {
+            document.getElementById('menu').scrollLeft = localStorage.getItem("menu-scroll-position");
+        }
+    }
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+    mybutton.onclick = function () {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        window.location.hash = ''
+    }
+
+    function menu_on_scroll() {
+        localStorage.setItem("menu-scroll-position", document.getElementById('menu').scrollLeft);
+    }
+
+</script>
+
+</body>
+
+</html>

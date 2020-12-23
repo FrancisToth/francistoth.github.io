@@ -1,0 +1,232 @@
+div.sidebar {
+    position: fixed;
+    display: block;
+    z-index: 30;
+    min-width:250px;
+    height:100%;
+    bottom: 0;
+    background-color: darkgray;
+}
+
+
+div.left {
+    left: 0;
+}
+div.right {
+    right: 0;
+}
+
+div.content {
+    display: block;
+    position: absolute;
+    left: 272px;
+    top:30px;
+    width: 773px;
+}
+
+div.title_sub2 {
+    border-bottom: 1px solid black;
+    width:420px;
+    min-height:0;
+    margin-top:10px;
+    margin-left:5px;
+}
+
+div.title_left2 {
+    border-left: 0.5px solid black;
+    min-width:1px;
+    margin-top:5px;
+    margin-left:10px;
+    height:45px;
+}
+
+div.header_sub2 {
+    border-bottom: 0.5px solid black;
+    min-width:698px;
+    min-height:0px;
+}
+
+div.subject {
+    font-size: 16px;
+    color: #231F20;
+    letter-spacing: 0px;
+    font-family: helvetica-neue-condensed-bold;
+    line-height: 0.927;
+
+    margin: 15px 0 20px 0;
+
+    font-style: normal;
+    font-weight: normal;
+    visibility: visible;
+    white-space: pre;
+    unicode-bidi: bidi-override;
+    font-feature-settings: "liga" off;
+    border-collapse: separate;
+    word-spacing: 0;
+}
+
+.header_section {
+    width: 800px;
+}
+
+.header_section .languages2{
+    letter-spacing: 1.44px;
+    font-size: 15px;
+    color: #4F4C4D;
+    font-family: helvetica-neue-condensed-bold;
+    margin: 0;
+    padding: 0;
+}
+
+.header_section .title2 {
+    font-size: 25px;
+    color: #4F4C4D;
+    letter-spacing: 2px;
+    font-family: helvetica-neue-condensed-bold;
+    line-height: 0.912;
+}
+
+.header_section .contact {
+    text-shadow: -0.015em 0 transparent, 0 0.015em transparent, 0.015em 0 transparent, 0 -0.015em transparent;
+    font-style: normal;
+    font-weight: normal;
+    visibility: visible;
+    unicode-bidi: bidi-override;
+    font-feature-settings: "liga" off;
+    border-collapse: separate;
+    word-spacing: 0;
+}
+
+.header_section .contact ul {
+    margin: 0 0 0 10px;
+    padding: 0;
+}
+
+.header_section .contact li {
+    font-size: 13px;
+    color: #706D6E;
+    letter-spacing: 0;
+    font-family: helvetica-neue;
+    list-style-type: none;
+    margin: 0;
+
+}
+
+.section {
+    border: 0;
+    width: 719.5px;
+}
+
+.section .header {
+    background: #E6E6E6;
+    word-spacing: 0px;
+    text-shadow: -0.015em 0px transparent, 0px 0.015em transparent, 0.015em 0px transparent, 0px -0.015em transparent;
+    font-family: helvetica-neue-condensed-bold;
+    font-style: normal;
+    font-weight: normal;
+    visibility: visible;
+    white-space: pre;
+    unicode-bidi: bidi-override;
+    font-feature-settings: "liga" off;
+    border-collapse: separate;
+    color: #656263;
+}
+
+.section .header .title {
+    margin-left: 30px;
+    letter-spacing: 1px;
+    font-size: 17px;
+    vertical-align: bottom;
+}
+
+.section .body {
+    width:98%;
+    font-size: 14px;
+    background: #FFFFFF;
+    color: #231F20;
+    word-spacing: 0px;
+    text-shadow: -0.015em 0px transparent, 0px 0.015em transparent, 0.015em 0px transparent, 0px -0.015em transparent;
+    letter-spacing: 0px;
+    font-family: helvetica-neue-condensed-bold;
+    line-height: 1;
+    font-style: normal;
+    font-weight: normal;
+    visibility: visible;
+    unicode-bidi: bidi-override;
+    font-feature-settings: "liga" off;
+    border-collapse: separate;
+}
+
+.section .body ul {
+    margin: 10px 0px 0px 0px;
+}
+
+.section .body li {
+    margin: 10px 0px 0px 0px;
+}
+
+.section .body .header {
+    background: #FFFFFF;
+    font-family: helvetica-neue;
+    letter-spacing: 0px;
+    font-size: 11px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.section .body .date {
+    font-family: helvetica-neue;
+    letter-spacing: 0px;
+    margin-left: 5px;
+    font-size: 11px;
+}
+
+.section .body .content {
+    color: #4F4C4D;
+    font-size: 13px;
+    font-family: helvetica-neue;
+}
+
+.footer {
+    color: #231F20;
+    word-spacing: 0px;
+    text-shadow: -0.015em 0px transparent, 0px 0.015em transparent, 0.015em 0px transparent, 0px -0.015em transparent;
+    letter-spacing: 0px;
+    font-family: helvetica-neue-condensed-bold;
+    line-height: 0.927;
+    font-style: normal;
+    font-weight: normal;
+    visibility: visible;
+    white-space: pre;
+    unicode-bidi: bidi-override;
+    font-feature-settings: "liga" off;
+    border-collapse: separate;
+    margin-top:15px;
+}
+
+@media print {
+    @page {
+        margin: 0
+    }
+
+    html {
+        margin: 0
+    }
+
+    body {
+        margin: 0;
+        -webkit-print-color-adjust: exact
+    }
+
+    div.content {
+        display: block;
+        position: absolute;
+        left: 65px;
+        top:70px;
+        width: 90%;
+    }
+
+    div.sidebar, div.left, div.right {
+        display: none
+    }
+}

@@ -1,0 +1,34 @@
+baseURL = "https://francistoth.github.io"
+languageCode = "en-us"
+title = "Francis Toth / Contramap"
+theme = "hugo-PaperMod"
+paginate = 5
+
+pygmentsuseclasses = true
+pygmentscodefences = true
+
+[params]
+ShowShareButtons = true
+disableThemeToggle = true
+defaultTheme = "dark"
+
+    [params.homeInfoParams]
+    Title = "Hi there,  I am Francis, an independent consultant specialized in Scala and Functional Programming."
+
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
+[[menus.main]]
+name = "about"
+weight = 1
+url = "about/"
+
+[[menus.main]]
+name = "talks"
+weight = 2
+url = "talks/"
+
+[[menus.main]]
+name = "resume"
+weight = 3
+url = "cv/"

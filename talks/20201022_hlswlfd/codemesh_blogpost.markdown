@@ -1,1 +1,0 @@
-## How I learned stop worrying about Software Design and love Functional Programming

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>About Variance | Francis Toth / Contramap</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type A and its subtype B, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these.">
+<meta name="author" content="">
+<link rel="canonical" href="https://www.contramap.dev/posts/2020-02-12-variance/" />
+<link href="https://www.contramap.dev/assets/css/stylesheet.min.d1bc2b736056bd5698d770eeedc08a73bce9e6cebb30810f6f1b2c2048e46ab8.css" integrity="sha256-0bwrc2BWvVaY13Du7cCKc7zp5s67MIEPbxssIEjkarg=" rel="preload stylesheet"
+    as="style">
+
+<link rel="icon" href="https://www.contramap.dev/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.contramap.dev/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.contramap.dev/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.contramap.dev/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.contramap.dev/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.68.3" />
+
+
+
+<script>
+    function openCity(evt, cityName, ref) {
+        var i = 0;
+        var bar = ref.parentElement;
+        var tab = ref.parentElement.parentElement;
+
+        var tabs = tab.getElementsByClassName("city");
+        for (i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+            if (tabs[i].id == cityName)
+                tabs[i].style.display = "block";
+        }
+
+        var tablinks = bar.getElementsByClassName("tablink");
+        for (i = 0; i < tabs.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" white0", "");
+        }
+        evt.currentTarget.className += " white0";
+    }
+
+
+hljs.registerLanguage("scala", function(e) {
+  return {   
+    k: {
+      keyword: 'type yield lazy override def with val var sealed abstract private trait object if forSome for while throw finally protected extends import final return else break new catch super class case package default try this match continue throws implicit',
+      literal: 'true false null'
+    },
+    c: [
+        hljs.QUOTE_STRING_MODE,
+        hljs.COMMENT(
+          "//",      
+          "*"        
+        ),
+        hljs.COMMENT(
+          "/\*",      
+          "\*/"        
+        )
+      ]
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<style>
+
+    .dark {
+        --hljs-bg: rgb(30, 40, 45);
+    }
+    .post-content .highlight,
+    .post-content pre {
+        margin-left: 0;
+        margin-right: 0;
+        background: var(--hljs-bg) !important;
+        border-radius: var(--radius);
+        background-color: rgb(30, 40, 45) !important;
+    }
+    .btn {
+        -webkit-border-radius: 5;
+        -moz-border-radius: 5;
+        border-radius: 5px;
+        font-family: Arial;
+        color: #ffffff;
+        font-size: 13px;
+        padding: 2px 7px 2px 7px;
+        text-decoration: none;
+    }
+
+     
+
+    
+    .grey0 {
+        background: #8a8a8a;
+    }
+    
+    .white0 {
+        background: #68899e;
+    }
+
+    .dark {
+    --hljs-bg: #263238;
+    }
+
+    .post-content code {
+        font-family: Hack, monospace !important;
+    }
+
+    .first-entry {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 0px;
+        margin: var(--gap) 0 calc(var(--gap) * 2) 0;
+        margin-bottom: 0;
+    }
+
+.highlight .hll { background-color: #ffffcc }
+.highlight  { background: rgb(30, 40, 45); }
+.highlight .c { color: #546E7A; font-style: italic }  
+.highlight .err { color: #a61717; background-color: #e3d2d2 }  
+.highlight .k { color:rgb(194, 136, 232);  }  
+.hljs-keyword { color:rgb(194, 136, 232);  }  
+
+.highlight .ch { color: #546E7A; font-style: italic }  
+.highlight .cm { color: rgb(167, 159, 148); font-style: italic }  
+.highlight .cp { color: #546E7A }  
+.highlight .cpf { color: #546E7A; font-style: italic }  
+.highlight .c1 { color: rgb(167, 159, 148); font-style: italic }  
+.highlight .cs { color: #546E7A; font-weight: bold }  
+.highlight .gd { color: #000000; background-color: #ffdddd }  
+.highlight .ge { font-style: italic }  
+.highlight .gr { color: #aa0000 }  
+.highlight .gh { color: #999999 }  
+.highlight .gi { color: #000000; background-color: #ddffdd }  
+.highlight .go { color: #888888 }  
+.highlight .gp { color: #555555 }  
+.highlight .gs { font-weight: bold }  
+.highlight .gu { color: #aaaaaa }  
+.highlight .gt { color: #aa0000 }  
+.highlight .kc { color: #F77669; font-weight: bold }  
+.highlight .kd { color: rgba(233, 237, 237, 1); font-weight: bold }  
+.highlight .kn { color: #000080; font-weight: bold }  
+.highlight .kp { color: #000080; font-weight: bold }  
+.highlight .kr { color: #000080; font-weight: bold }  
+.highlight .kt { color: rgb(127, 174, 255); }  
+.highlight .m { color: #F77669 }  
+.highlight .s { color: rgb(195, 232, 141) }  
+.highlight .n { color: rgba(233, 237, 237, 1); }  
+.highlight .na { color: #FF0000 }  
+.highlight .nc { color: rgba(233, 237, 237, 1); }  
+.highlight .nt { color: #000080; font-weight: bold }  
+.highlight .ow { font-weight: bold }  
+.highlight .w { color: #bbbbbb }  
+.highlight .mb { color: #0000FF }  
+.highlight .mf { color: #0000FF }  
+.highlight .mh { color: #0000FF }  
+.highlight .mi { color:rgb(247, 118, 105) }  
+.highlight .mo { color: #0000FF }  
+.highlight .sa { color: #0000FF }  
+.highlight .sb { color: #0000FF }  
+.highlight .sc { color: #800080 }  
+.highlight .dl { color: #0000FF }  
+.highlight .sd { color: #0000FF }  
+.highlight .s2 { color: #0000FF }  
+.highlight .se { color: #0000FF }  
+.highlight .sh { color: #0000FF }  
+.highlight .si { color: #0000FF }  
+.highlight .sx { color: #0000FF }  
+.highlight .sr { color: #0000FF }  
+.highlight .s1 { color: #0000FF }  
+.highlight .ss { color: #0000FF }  
+.highlight .il { color: #0000FF }  
+
+</style>
+<meta property="og:title" content="About Variance" />
+<meta property="og:description" content="Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type A and its subtype B, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.contramap.dev/posts/2020-02-12-variance/" />
+<meta property="article:published_time" content="2020-02-12T08:02:48-05:00" />
+<meta property="article:modified_time" content="2020-02-12T08:02:48-05:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="About Variance"/>
+<meta name="twitter:description" content="Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type A and its subtype B, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these."/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "About Variance",
+  "name": "About Variance",
+  "description": "Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple …",
+  "keywords": [
+    
+  ],
+  "articleBody": "Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type A and its subtype B, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these.\nSubtype 101 When talking about Variance, it’s important to understand the meaning of the word subtype. Too often, we think about subtyping in terms of inheritance. In other words, if B inherits from A then B is a subtype of A. Subtyping is actually more about how compatible two types are. As described by the Liskov Substitution Principle, a type B is a subtype of A, if B can be used when A is expected without affecting the program’s correctness.\nclass A class B extends A val a: A = new B val b: B = new A ^ error: type mismatch; found : A required: B B can be used wherever an A is expected but not the other way around. This is because B provides as much capabilities/guarantees as A but not vice-versa. We therefore say that B is a subtype of A. The question asked by variance is therefore whether or not this property is held when A and B are used to define more complex types (eg. List[A], A = B, …).\nVariance 101 There are overall three types of variance:\n invariance : A : B does not imply that Foo[A] : Foo[B] covariance : A : B implies that Foo[A] : Foo[B] contravariance: A : B implies that Foo[A]   In Scala, we use the + sign to mark a type as covariant, the - to mark it as contravariant and no sign to mark it as invariant. Concretely:\n// A : B does not imply F[A] : F[B] nor F[A] class Invariant[T] val ia: Invariant[A] = new Invariant[A] val ib: Invariant[B] = ia // ERROR  // A : B implies F[A] : F[B] trait Covariant[+T] val covb: Covariant[B] = new Covariant[B] val covb: Covariant[A] = covb // OK  // A : B implies F[A] trait Contravariant[-T] val cona: Contravariant[A] = new Contravariant[A] val conb: Contravariant[B] = cona // OK Substitution rule One good way to think about variance is to look at the substitution process this way:\nval fl: Foo[L] = new Foo[R] // the `=` stands for \"can be substituted by\"  invariance: does not allow any substitution so R must equal L (L =:= R) covariance: allows one only if R is more specialized (+) than L (L : R) contravariance allows one only if R is less specialized (-) than L (L )  In other words, the general substitution rule is as follow:\n when types are covariant, L has to be a supertype of R when types are contravariant, L has to be a subtype of R.  Variance and functions When it comes to variance, functions are a pretty interesting case. As you may know, functions in Scala are defined using particular traits such as the one below:\ntrait Function1[-T, +R] { def apply(t: T): R } A function is therefore contravariant in its arguments and covariant in its result:\nval f1: Function1[L1, R0] = new Function1[L0, R1] { /* ... */ } If we apply the general substitution rule mentioned earlier, we conclude that L1 and R0 : R1. In other words, the function on the left has to:\n take a more specialized type as an argument (contravariance) and/or return a less specialized type (covariance)  L0 = R1 is therefore a subtype of L1 = R0.\nVariance position Once you start introducing variance, you necessarily end up with conflicts and pretty confusing error messages. The main rule here is that once a type has been marked as covariant or contravariant, it cannot be used in a position requiring the opposite variance:\ntrait Foo[+T] { // functions are contravariant in their argument  def foo(t: T): Unit // error: covariant type T occurs in contravariant  // position in type T of value t } trait Bar[-U] { // functions are covariant in their result  def bar(): U // error contravariant type T occurs in covariant  // position in type (t: T)T of method bar } The compiler prevents us from doing this in order to enforce subtyping rules and guarantee correctness at runtime. To convince yourself, let’s think about what you would be allowed to do if variance errors would not be caught at compile time:\nclass A class B0 extends A class B1 extends A trait Foo[+T] { // Assume this compiles  def foo(t: T): Unit } val fb0: Foo[B0] = new Foo[B0] { def foo(b0: B0): Unit = ??? } // Because `Foo[_]` is covariant in `T` val fba: Foo[A] = fb0 // This will crash the program at runtime // as `fba` can only accept `B0`s fba.foo(new B1) trait Bar[-U] { // Assume this compiles  def bar(): U } val ba: Bar[A] = new Bar[A] { def bar(): A = new B0 } // Because `Bar[_]` is contravariant in `U` val bb1: Bar[B1] = ba // This will crash the program at runtime // as `bb1` can only produce `B1`s val b1: B1 = ba.bar() In some cases, we may however need to use a type parameter at different positions. This can be done but under some restrictions.\nIn the first case, T is covariant and cannot be used as a function argument. We can however use an appropriate substitute for foo that satifies the requirements for contravariance. Remember that when types are covariant L has to be a supertype of R.\nval fl: Function1[L, Unit] = new Function1[R, Unit] So a valid substitute for foo would be T1 = Unit with T1 : T. This gives us:\ntrait Foo[+T] { def foo[T1 : T](t: T1): Unit } Similarly in the second case, T is contravariant and cannot be used as a function result. In order to satisfy the requirements for covariance, we need to remember that when types are contravariant, L has to be a subtype of R\nval fl: Function1[L, Unit] = new Function1[R, Unit] So a valid substitute for foo would be T0 = Unit with T0 . This gives us:\ntrait Foo[-T] { def foo[T0  T](t: T0): Unit } Variance flipping As if variance was not complicated enough, a type’s variance can also flip depending on the context.\ntrait Foo[-A] { def foo(fa: Foo[A]): Unit /* contravariant type A occurs in covariant position in type Foo[A] of value fa */ } Despite fa being a function argument and A marked as contravariant, the compiler complains about A being used in a covariant position. To understand why this is happening, let’s look at how A's variance is calculated in foo. A is first defined as contravariant:\ndef foo(fa: Foo[(-A)]): Unit but because it is used to define a function argument, it is also marked contravariant by foo.\ndef foo(fa: Foo[-(-A)]): Unit In other words, A is marked contravariant twice in foo which makes it covariant at that position, hence the compilation error:\ndef foo(fa: Foo[+A]): Unit The takeaway here is that a type parameter variance can flip depending on its position. This is actually described in the specification of the Scala language. So whenever you get into this kind of issue, apply the same reasoning that we have just described.\nRecap Variance is a complicated topic but it does not need to be. Its main purpose is to provide us with typesafe substitution but also with improved type inference:\nclass Animal class Zebra extends Animal // thanks to covariance val animal: Animal = new Zebra class Hotel[-T] def generic = new Hotel[Animal] // thanks to contravariance val ah: Hotel[Zebra] = generic Secondly, one may wonder how to remember what should be covariant or contravariant. A good mnemonic is to remember that whatever is produced by a class should be marked as covariant while anything consumed by a class should be contravariant. In case of conflict, fall back on the substitution rule.\nSpecial thanks To Calvin, John and Adam for their help writing this post.\nReferences  Checking-variance-annotations Liskov Substitution Principle Specification of the Scala language  ",
+  "wordCount" : "1392",
+  "inLanguage": "en",
+  "datePublished": "2020-02-12T08:02:48-05:00",
+  "dateModified": "2020-02-12T08:02:48-05:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.contramap.dev/posts/2020-02-12-variance/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Francis Toth / Contramap",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.contramap.dev/favicon.ico"
+    }
+  }
+}
+</script>
+
+
+
+</head>
+
+<body class=" dark">
+<noscript>
+    <style type="text/css">
+        .theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.contramap.dev/" accesskey="h" title="Francis Toth / Contramap (Alt + H)">Francis Toth / Contramap</a>
+            <span class="logo-switches">
+                
+            </span>
+        </div>
+        <ul class="menu" id="menu" onscroll="menu_on_scroll()">
+            <li>
+                <a href="https://www.contramap.dev/about/" title="about">
+                    <span>about</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.contramap.dev/talks/" title="talks">
+                    <span>talks</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.contramap.dev/cv/" title="resume">
+                    <span>resume</span>
+                </a>
+            </li><li>
+                <a style="display: inline;" target="_blank" href="https://twitter.com/francistoth?lang=en">
+                    <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" style="height: 20px; width: 30px; fill: currentColor; transition: transform .1s">
+                        <path
+                            d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+                    </svg>
+                </a>
+                <a style="display: inline;" target="_blank" href="https://ca.linkedin.com/in/francistoth/en-us">
+                    <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" style="height: 20px; width: 30px; fill: currentColor; transition: transform .1s">
+                        <path
+                            d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+                    </svg>
+                </a>
+                <a style="display: inline;" target="_blank" href="https://github.com/FrancisToth">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round", style="height: 20px; width: 30px; fill: currentColor; transition: transform .1s">
+                        <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                        </path>
+                    </svg>
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</header>
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+      About Variance
+    </h1>
+    <div class="post-meta">February 12, 2020
+
+    </div>
+  </header> 
+
+  <div class="post-content">
+<p>Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type <code>A</code> and its subtype <code>B</code>, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two <a href="https://www.patreon.com/jdegoes">Spartan</a> sessions about this topic, and we will cover some of the thoughts he shared during these.</p>
+<h2 id="subtype-101">Subtype 101<a hidden class="anchor" aria-hidden="true" href="#subtype-101">#</a></h2>
+<p>When talking about Variance, it&rsquo;s important to understand the meaning of the word <em>subtype</em>. Too often, we think about subtyping in terms of inheritance. In other words, if <code>B</code> inherits from <code>A</code> then <code>B</code> is a subtype of <code>A</code>. Subtyping is actually more about how compatible two types are. As described by the <a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a>, a type <code>B</code> is a subtype of <code>A</code>, if <code>B</code> can be used when <code>A</code> is expected without affecting the program&rsquo;s correctness.</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">A</span>
+<span class="k">class</span> <span class="nc">B</span> <span class="k">extends</span> <span class="n">A</span>
+
+<span class="k">val</span> <span class="n">a</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=</span> <span class="k">new</span> <span class="n">B</span>
+<span class="k">val</span> <span class="n">b</span><span class="k">:</span> <span class="kt">B</span> <span class="o">=</span> <span class="k">new</span> <span class="n">A</span>
+           <span class="o">^</span>
+<span class="n">error</span><span class="k">:</span> <span class="k">type</span> <span class="kt">mismatch</span><span class="o">;</span>
+ <span class="n">found</span>   <span class="k">:</span> <span class="kt">A</span>
+ <span class="n">required</span><span class="k">:</span> <span class="kt">B</span>
+</code></pre></div><p><code>B</code> can be used wherever an <code>A</code> is expected but not the other way around. This is because <code>B</code> provides as much capabilities/guarantees as <code>A</code> but not vice-versa. We therefore say that <code>B</code> is a subtype of <code>A</code>. The question asked by variance is therefore whether or not this property is held when <code>A</code> and <code>B</code> are used to define more complex types (eg. <code>List[A]</code>, <code>A =&gt; B</code>, &hellip;).</p>
+<h2 id="variance-101">Variance 101<a hidden class="anchor" aria-hidden="true" href="#variance-101">#</a></h2>
+<p>There are overall three types of variance:</p>
+<ul>
+<li><strong>invariance</strong>    : <code>A &gt;: B</code> does not imply that <code>Foo[A] &gt;: Foo[B]</code></li>
+<li><strong>covariance</strong>    : <code>A &gt;: B</code> implies that <code>Foo[A] &gt;: Foo[B]</code></li>
+<li><strong>contravariance</strong>: <code>A &gt;: B</code> implies that <code>Foo[A] &lt;: Foo[B]</code></li>
+</ul>
+<p>In Scala, we use the <code>+</code> sign to mark a type as <strong>covariant</strong>, the <code>-</code> to mark it as <strong>contravariant</strong> and no sign to mark it as <strong>invariant</strong>. Concretely:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="c1">// A :&gt; B does not imply F[A] :&gt; F[B] nor F[A] &lt;: F[B]
+</span><span class="c1"></span><span class="k">class</span> <span class="nc">Invariant</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+<span class="nc">val</span> <span class="n">ia</span><span class="k">:</span> <span class="kt">Invariant</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Invariant</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+<span class="k">val</span> <span class="n">ib</span><span class="k">:</span> <span class="kt">Invariant</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="n">ia</span> <span class="c1">// ERROR
+</span><span class="c1"></span>
+<span class="c1">// A :&gt; B implies F[A] :&gt; F[B]
+</span><span class="c1"></span><span class="k">trait</span> <span class="nc">Covariant</span><span class="o">[</span><span class="kt">+T</span><span class="o">]</span>
+<span class="nc">val</span> <span class="n">covb</span><span class="k">:</span> <span class="kt">Covariant</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Covariant</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span>
+<span class="k">val</span> <span class="n">covb</span><span class="k">:</span> <span class="kt">Covariant</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="n">covb</span> <span class="c1">// OK
+</span><span class="c1"></span>
+<span class="c1">// A :&gt; B implies F[A] &lt;: F[B]
+</span><span class="c1"></span><span class="k">trait</span> <span class="nc">Contravariant</span><span class="o">[</span><span class="kt">-T</span><span class="o">]</span>
+<span class="nc">val</span> <span class="n">cona</span><span class="k">:</span> <span class="kt">Contravariant</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Contravariant</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+<span class="k">val</span> <span class="n">conb</span><span class="k">:</span> <span class="kt">Contravariant</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="n">cona</span> <span class="c1">// OK
+</span></code></pre></div><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="substitution-rule">Substitution rule<a hidden class="anchor" aria-hidden="true" href="#substitution-rule">#</a></h2>
+<p>One good way to think about variance is to look at the substitution process this way:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">fl</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">[</span><span class="kt">L</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Foo</span><span class="o">[</span><span class="kt">R</span><span class="o">]</span> <span class="c1">// the `=` stands for &#34;can be substituted by&#34;
+</span></code></pre></div><ul>
+<li><strong>invariance</strong>: does not allow any substitution so <code>R</code> must equal <code>L</code> (<code>L =:= R</code>)</li>
+<li><strong>covariance</strong>: allows one only if <code>R</code> is <strong>more</strong> specialized (+) than <code>L</code> (<code>L :&gt; R</code>)</li>
+<li><strong>contravariance</strong> allows one only if <code>R</code> is <strong>less</strong> specialized (-) than <code>L</code> (<code>L &lt;: R</code>)</li>
+</ul>
+<p>In other words, the general substitution rule is as follow:</p>
+<ul>
+<li>when types are <strong>covariant</strong>, <code>L</code> has to be a <strong>supertype</strong> of <code>R</code></li>
+<li>when types are <strong>contravariant</strong>, <code>L</code> has to be a <strong>subtype</strong> of <code>R</code>.</li>
+</ul>
+<h2 id="variance-and-functions">Variance and functions<a hidden class="anchor" aria-hidden="true" href="#variance-and-functions">#</a></h2>
+<p>When it comes to variance, functions are a pretty interesting case. As you may know, functions in Scala are defined using particular traits such as the one below:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">-T</span>, <span class="kt">+R</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">R</span>
+<span class="o">}</span>
+</code></pre></div><p>A function is therefore <strong>contravariant in its arguments</strong> and <strong>covariant in its result</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">f1</span><span class="k">:</span> <span class="kt">Function1</span><span class="o">[</span><span class="kt">L1</span>, <span class="kt">R0</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">L0</span>, <span class="kt">R1</span><span class="o">]</span> <span class="o">{</span> <span class="cm">/* ... */</span> <span class="o">}</span>
+</code></pre></div><p>If we apply the general <a href="#substitutionrule">substitution rule</a> mentioned earlier, we conclude that <code>L1 &lt;: L0</code> and <code>R0 &gt;: R1</code>. In other words, the function on the left has to:</p>
+<ul>
+<li>take a <strong>more</strong> specialized type as an argument (<strong>contravariance</strong>)</li>
+<li>and/or return a <strong>less</strong> specialized type (<strong>covariance</strong>)</li>
+</ul>
+<p><code>L0 =&gt; R1</code> is therefore a subtype of <code>L1 =&gt; R0</code>.</p>
+<h2 id="variance-position">Variance position<a hidden class="anchor" aria-hidden="true" href="#variance-position">#</a></h2>
+<p>Once you start introducing variance, you necessarily end up with conflicts and pretty confusing error messages. The main rule here is that once a type has been marked as covariant or contravariant, it cannot be used in a position requiring the opposite variance:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Foo</span><span class="o">[</span><span class="kt">+T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// functions are contravariant in their argument
+</span><span class="c1"></span>  <span class="k">def</span> <span class="n">foo</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span>
+  <span class="c1">// error: covariant type T occurs in contravariant 
+</span><span class="c1"></span>  <span class="c1">// position in type T of value t
+</span><span class="c1"></span><span class="o">}</span>
+
+<span class="k">trait</span> <span class="nc">Bar</span><span class="o">[</span><span class="kt">-U</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// functions are covariant in their result
+</span><span class="c1"></span>  <span class="k">def</span> <span class="n">bar</span><span class="o">()</span><span class="k">:</span> <span class="kt">U</span>
+  <span class="c1">// error contravariant type T occurs in covariant 
+</span><span class="c1"></span>  <span class="c1">// position in type (t: T)T of method bar
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></div><p>The compiler prevents us from doing this in order to enforce subtyping rules and guarantee correctness at runtime. To convince yourself, let&rsquo;s think about what you would be allowed to do if variance errors would not be caught at compile time:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">A</span>
+<span class="k">class</span> <span class="nc">B0</span> <span class="k">extends</span> <span class="n">A</span>
+<span class="k">class</span> <span class="nc">B1</span> <span class="k">extends</span> <span class="n">A</span>
+
+<span class="k">trait</span> <span class="nc">Foo</span><span class="o">[</span><span class="kt">+T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// Assume this compiles
+</span><span class="c1"></span>  <span class="k">def</span> <span class="n">foo</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span>
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="n">fb0</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">[</span><span class="kt">B0</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Foo</span><span class="o">[</span><span class="kt">B0</span><span class="o">]</span> <span class="o">{</span> <span class="k">def</span> <span class="n">foo</span><span class="o">(</span><span class="n">b0</span><span class="k">:</span> <span class="kt">B0</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">???</span> <span class="o">}</span>
+<span class="c1">// Because `Foo[_]` is covariant in `T`
+</span><span class="c1"></span><span class="k">val</span> <span class="n">fba</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="n">fb0</span>
+
+<span class="c1">// This will crash the program at runtime
+</span><span class="c1">// as `fba` can only accept `B0`s
+</span><span class="c1"></span><span class="n">fba</span><span class="o">.</span><span class="n">foo</span><span class="o">(</span><span class="k">new</span> <span class="n">B1</span><span class="o">)</span>
+
+<span class="k">trait</span> <span class="nc">Bar</span><span class="o">[</span><span class="kt">-U</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// Assume this compiles
+</span><span class="c1"></span>  <span class="k">def</span> <span class="n">bar</span><span class="o">()</span><span class="k">:</span> <span class="kt">U</span>
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="n">ba</span><span class="k">:</span>  <span class="kt">Bar</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Bar</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span> <span class="k">def</span> <span class="n">bar</span><span class="o">()</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=</span> <span class="k">new</span> <span class="n">B0</span> <span class="o">}</span>
+<span class="c1">// Because `Bar[_]` is contravariant in `U`
+</span><span class="c1"></span><span class="k">val</span> <span class="n">bb1</span><span class="k">:</span> <span class="kt">Bar</span><span class="o">[</span><span class="kt">B1</span><span class="o">]</span> <span class="k">=</span> <span class="n">ba</span>
+
+<span class="c1">// This will crash the program at runtime
+</span><span class="c1">// as `bb1` can only produce `B1`s
+</span><span class="c1"></span><span class="k">val</span> <span class="n">b1</span><span class="k">:</span> <span class="kt">B1</span> <span class="o">=</span> <span class="n">ba</span><span class="o">.</span><span class="n">bar</span><span class="o">()</span>
+</code></pre></div><p>In some cases, we may however need to use a type parameter at different positions. This can be done but under some restrictions.</p>
+<p>In the first case, <code>T</code> is covariant and cannot be used as a function argument. We can however use an appropriate substitute for <code>foo</code> that satifies the requirements for contravariance. Remember that <em>when types are <strong>covariant</strong> <code>L</code> has to be a <strong>supertype</strong> of <code>R</code></em>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">fl</span><span class="k">:</span> <span class="kt">Function1</span><span class="o">[</span><span class="kt">L</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">R</span>, <span class="kt">Unit</span><span class="o">]</span>
+</code></pre></div><p>So a valid substitute for <code>foo</code> would be <code>T1 =&gt; Unit</code> with <code>T1 &gt;: T</code>. This gives us:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Foo</span><span class="o">[</span><span class="kt">+T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">foo</span><span class="o">[</span><span class="kt">T1</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">](</span><span class="n">t</span><span class="k">:</span> <span class="kt">T1</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span>
+<span class="o">}</span>
+</code></pre></div><p>Similarly in the second case, <code>T</code> is contravariant and cannot be used as a function result. In order to satisfy the requirements for covariance, we need to remember that <em>when types are <strong>contravariant</strong>, <code>L</code> has to be a <strong>subtype</strong> of <code>R</code></em></p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">fl</span><span class="k">:</span> <span class="kt">Function1</span><span class="o">[</span><span class="kt">L</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">R</span>, <span class="kt">Unit</span><span class="o">]</span>
+</code></pre></div><p>So a valid substitute for <code>foo</code> would be <code>T0 =&gt; Unit</code> with <code>T0 &lt;: T</code>. This gives us:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Foo</span><span class="o">[</span><span class="kt">-T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">foo</span><span class="o">[</span><span class="kt">T0</span> <span class="k">&lt;:</span> <span class="kt">T</span><span class="o">](</span><span class="n">t</span><span class="k">:</span> <span class="kt">T0</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span>
+<span class="o">}</span>
+</code></pre></div><h2 id="variance-flipping">Variance flipping<a hidden class="anchor" aria-hidden="true" href="#variance-flipping">#</a></h2>
+<p>As if variance was not complicated enough, a type&rsquo;s variance can also flip depending on the context.</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Foo</span><span class="o">[</span><span class="kt">-A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">foo</span><span class="o">(</span><span class="n">fa</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span>
+  <span class="cm">/* contravariant type A occurs in covariant 
+</span><span class="cm">     position in type Foo[A] of value fa */</span>
+<span class="o">}</span>
+</code></pre></div><p>Despite <code>fa</code> being a function argument and <code>A</code> marked as contravariant, the compiler complains about <code>A</code> being used in a covariant position. To understand why this is happening, let&rsquo;s look at how <code>A</code>'s variance is calculated in <code>foo</code>. <code>A</code> is first defined as contravariant:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">foo</span><span class="o">(</span><span class="n">fa</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">[(</span><span class="kt">-A</span><span class="o">)])</span><span class="k">:</span> <span class="kt">Unit</span>
+</code></pre></div><p>but because it is used to define a function argument, it is also marked contravariant by <code>foo</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">foo</span><span class="o">(</span><span class="n">fa</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">[</span><span class="kt">-</span><span class="o">(</span><span class="kt">-A</span><span class="o">)])</span><span class="k">:</span> <span class="kt">Unit</span>
+</code></pre></div><p>In other words, <code>A</code> is marked contravariant twice in <code>foo</code> which makes it covariant at that position, hence the compilation error:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">foo</span><span class="o">(</span><span class="n">fa</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">[</span><span class="kt">+A</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span>
+</code></pre></div><p>The takeaway here is that a type parameter variance can flip depending on its position. This is actually described in the <a href="https://www.scala-lang.org/files/archive/spec/2.11/04-basic-declarations-and-definitions.html#variance-annotations">specification of the Scala language</a>. So whenever you get into this kind of issue, apply the same reasoning that we have just described.</p>
+<h2 id="recap">Recap<a hidden class="anchor" aria-hidden="true" href="#recap">#</a></h2>
+<p>Variance is a complicated topic but it does not need to be. Its main purpose is to provide us with <strong>typesafe substitution</strong> but also with <strong>improved type inference</strong>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Animal</span>
+<span class="k">class</span> <span class="nc">Zebra</span> <span class="k">extends</span> <span class="nc">Animal</span>
+<span class="c1">// thanks to covariance
+</span><span class="c1"></span><span class="k">val</span> <span class="n">animal</span><span class="k">:</span> <span class="kt">Animal</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Zebra</span>
+
+<span class="k">class</span> <span class="nc">Hotel</span><span class="o">[</span><span class="kt">-T</span><span class="o">]</span>
+<span class="nc">def</span> <span class="n">generic</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Hotel</span><span class="o">[</span><span class="kt">Animal</span><span class="o">]</span>
+<span class="c1">// thanks to contravariance
+</span><span class="c1"></span><span class="k">val</span> <span class="n">ah</span><span class="k">:</span> <span class="kt">Hotel</span><span class="o">[</span><span class="kt">Zebra</span><span class="o">]</span> <span class="k">=</span> <span class="n">generic</span>
+</code></pre></div><p>Secondly, one may wonder how to remember what should be <strong>covariant</strong> or <strong>contravariant</strong>. A good mnemonic is to remember that whatever is <strong>produced</strong> by a class should be marked as <strong>covariant</strong> while anything <strong>consumed</strong> by a class should be <strong>contravariant</strong>. In case of conflict, fall back on the <a href="#substitutionrule">substitution rule</a>.</p>
+<p>Special thanks To <a href="https://github.com/calvinlfer">Calvin</a>, <a href="https://github.com/jdegoes">John</a> and <a href="https://github.com/adamgfraser">Adam</a> for their help writing this post.</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="http://mbonaci.github.io/scala/#433---checking-variance-annotations">Checking-variance-annotations</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a></li>
+<li><a href="https://www.scala-lang.org/files/archive/spec/2.11/04-basic-declarations-and-definitions.html#variance-annotations">Specification of the Scala language</a></li>
+</ul>
+
+</div>
+  <footer class="post-footer">
+
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share About Variance on twitter"
+        href="https://twitter.com/intent/tweet/?text=About%20Variance&amp;url=https%3a%2f%2fwww.contramap.dev%2fposts%2f2020-02-12-variance%2f&amp;hashtags=">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share About Variance on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.contramap.dev%2fposts%2f2020-02-12-variance%2f&amp;title=About%20Variance&amp;summary=About%20Variance&amp;source=https%3a%2f%2fwww.contramap.dev%2fposts%2f2020-02-12-variance%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share About Variance on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.contramap.dev%2fposts%2f2020-02-12-variance%2f&title=About%20Variance">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share About Variance on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.contramap.dev%2fposts%2f2020-02-12-variance%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share About Variance on whatsapp"
+        href="https://api.whatsapp.com/send?text=About%20Variance%20-%20https%3a%2f%2fwww.contramap.dev%2fposts%2f2020-02-12-variance%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share About Variance on telegram"
+        href="https://telegram.me/share/url?text=About%20Variance&amp;url=https%3a%2f%2fwww.contramap.dev%2fposts%2f2020-02-12-variance%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+
+  </footer>
+</article>
+    </main><footer class="footer">
+    <span>&copy; 2020 <a href="https://www.contramap.dev/">Francis Toth / Contramap</a></span>
+    <span>&middot;</span>
+    <span>Powered by <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></span>
+    <span>&middot;</span>
+    <span>Theme <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a></span>
+</footer>
+<button class="top-link" id="top-link" type="button" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6">
+        <path d="M12 6H0l6-6z" /></svg>
+</button>
+
+
+
+<script defer src="https://www.contramap.dev/assets/js/highlight.min.27cd435cc9ed6abb4b496581b151804f79f366c412620272bb94e2f5f598ebcc.js" integrity="sha256-J81DXMntartLSWWBsVGAT3nzZsQSYgJyu5Ti9fWY68w="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<script>
+    window.onload = function () {
+        if (localStorage.getItem("menu-scroll-position")) {
+            document.getElementById('menu').scrollLeft = localStorage.getItem("menu-scroll-position");
+        }
+    }
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+    mybutton.onclick = function () {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        window.location.hash = ''
+    }
+
+    function menu_on_scroll() {
+        localStorage.setItem("menu-scroll-position", document.getElementById('menu').scrollLeft);
+    }
+
+</script>
+
+</body>
+
+</html>
