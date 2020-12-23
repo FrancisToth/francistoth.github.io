@@ -2,40 +2,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Francis Toth / Contramap</title>
-    <link>https://www.contramap.dev/posts/</link>
+    <link>https://francistoth.github.io/posts/</link>
     <description>Recent content in Posts on Francis Toth / Contramap</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 22 Sep 2020 08:51:48 -0500</lastBuildDate>
     
-	<atom:link href="https://www.contramap.dev/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://francistoth.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Composition</title>
-      <link>https://www.contramap.dev/posts/2020-09-22-composition/</link>
+      <link>https://francistoth.github.io/posts/2020-09-22-composition/</link>
       <pubDate>Tue, 22 Sep 2020 08:51:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2020-09-22-composition/</guid>
+      <guid>https://francistoth.github.io/posts/2020-09-22-composition/</guid>
       <description>An efficient software design is one allowing its components to be separated and recombined without introducing unexpected behaviors. This topic has been tackled over and over in the past and different approaches like the SOLID principles or the GOF patterns eventually came up to address this problem. Despite their value, these tend to confuse many software developers however. Taken separately, they may indeed sound incomplete and often fail to convey what ties them all together.</description>
     </item>
     
     <item>
       <title>Newtype</title>
-      <link>https://www.contramap.dev/posts/2020-04-11-newtypes/</link>
+      <link>https://francistoth.github.io/posts/2020-04-11-newtypes/</link>
       <pubDate>Sat, 11 Apr 2020 08:02:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2020-04-11-newtypes/</guid>
+      <guid>https://francistoth.github.io/posts/2020-04-11-newtypes/</guid>
       <description>In the previous post, we briefly covered how a typeclass can be implemented and ended up asking ourselves how multiple implementations of a typeclass could be done for the same data type while not compromising the implicit mechanism (in other words, type class coherency).
 This technique has been deeply covered in a Spartan session presented by John De Goes, and this is a small teaser of what one can learn while attending his course:</description>
     </item>
     
     <item>
       <title>Typeclasses</title>
-      <link>https://www.contramap.dev/posts/2020-04-09-typeclasses/</link>
+      <link>https://francistoth.github.io/posts/2020-04-09-typeclasses/</link>
       <pubDate>Thu, 09 Apr 2020 08:02:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2020-04-09-typeclasses/</guid>
+      <guid>https://francistoth.github.io/posts/2020-04-09-typeclasses/</guid>
       <description>Typeclasses are a very common topic when tackling Functional Programming and is what enables abstraction over similar (and possibly unrelated) data-structures.
 Traditional approach In Object-Oriented Programming, this is usually achieved using an interface or an abstract class.
 trait Json trait JSonSerializable { def toJson: Json } def serialize[A &amp;lt;: JsonSerializable](a: A): Json = a.toJson class Person extends JSonSerializable { override def toJson: Json = ??? } Despite being pretty simple to understand, this approach comes with several issues.</description>
@@ -43,29 +43,29 @@ trait Json trait JSonSerializable { def toJson: Json } def serialize[A &amp;lt;:
     
     <item>
       <title>HList</title>
-      <link>https://www.contramap.dev/posts/2020-02-23-hlist/</link>
+      <link>https://francistoth.github.io/posts/2020-02-23-hlist/</link>
       <pubDate>Sat, 29 Feb 2020 08:02:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2020-02-23-hlist/</guid>
+      <guid>https://francistoth.github.io/posts/2020-02-23-hlist/</guid>
       <description>The Heterogeneous List aka HList is a pretty well-known data structure in the functional / type programming world and is a very interesting topic to cover as it can teach us a lot about Scala&amp;rsquo;s type system in general. John A. De Goes recently used this concept to model an SQL language in a typesafe fashion and presented its work in a Spartan session.
 The problem tackled by HLists is about storing elements of different types (that is heterogeneous elements) and retaining information about these types at the same time.</description>
     </item>
     
     <item>
       <title>About Variance</title>
-      <link>https://www.contramap.dev/posts/2020-02-12-variance/</link>
+      <link>https://francistoth.github.io/posts/2020-02-12-variance/</link>
       <pubDate>Wed, 12 Feb 2020 08:02:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2020-02-12-variance/</guid>
+      <guid>https://francistoth.github.io/posts/2020-02-12-variance/</guid>
       <description>Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type A and its subtype B, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these.</description>
     </item>
     
     <item>
       <title>Aux pattern</title>
-      <link>https://www.contramap.dev/posts/2020-01-24-aux/</link>
+      <link>https://francistoth.github.io/posts/2020-01-24-aux/</link>
       <pubDate>Wed, 29 Jan 2020 08:02:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2020-01-24-aux/</guid>
+      <guid>https://francistoth.github.io/posts/2020-01-24-aux/</guid>
       <description>In this post, we will demonstrate a technique called type refinement (Aux pattern) that was covered in a Spartan session by John De Goes.
 We would like to solve the following problem: Given a Member and a Family, we would like to make sure a Selection is valid at compile-time. A Selection is valid only if the Member provided belongs to the Family passed in parameter.
 case class Member(name: String) sealed trait Family case class Selection(family: Family, member: Member) A first approach consists in providing a type parameter:</description>
@@ -73,10 +73,10 @@ case class Member(name: String) sealed trait Family case class Selection(family:
     
     <item>
       <title>Typesafe reflection</title>
-      <link>https://www.contramap.dev/posts/2020-01-22-typesafe_reflection/</link>
+      <link>https://francistoth.github.io/posts/2020-01-22-typesafe_reflection/</link>
       <pubDate>Wed, 22 Jan 2020 08:02:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2020-01-22-typesafe_reflection/</guid>
+      <guid>https://francistoth.github.io/posts/2020-01-22-typesafe_reflection/</guid>
       <description>Following the previous post, here is a nice technique to implement typesafe reflection using GADTs.
 As you may know, Scala provides us with Phantom types. A Phantom type is parameterized type which the only purpose is to provide type-safety and which is erased at runtime:
 /* A is only present as a type parameter but is not used anywhere else in the structure definition */ case class Foo[A](name: String) This can be used to tag a type with some additional metadata used by the compiler to ensure type-safety:</description>
@@ -84,10 +84,10 @@ As you may know, Scala provides us with Phantom types. A Phantom type is paramet
     
     <item>
       <title>GADTS in a nutshell</title>
-      <link>https://www.contramap.dev/posts/2019-11-30-gadt/</link>
+      <link>https://francistoth.github.io/posts/2019-11-30-gadt/</link>
       <pubDate>Sat, 30 Nov 2019 08:02:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2019-11-30-gadt/</guid>
+      <guid>https://francistoth.github.io/posts/2019-11-30-gadt/</guid>
       <description>I recently attended a training provided by John De Goes about Generalized Algebraic Data Types (GADTs) and wanted to make a quick recap of what those are.
 An Algebraic Data Type (ADT) is a sum type built from a collection of sum/product types:
 sealed trait Foo object Foo { case class Bar() extends Foo } In order to make this ADT polymorphic, we have to introduce type parameters in some of the terms of the ADT:</description>
@@ -95,10 +95,10 @@ sealed trait Foo object Foo { case class Bar() extends Foo } In order to make th
     
     <item>
       <title>Blog revamping</title>
-      <link>https://www.contramap.dev/posts/2019-11-22-blog_revamped/</link>
+      <link>https://francistoth.github.io/posts/2019-11-22-blog_revamped/</link>
       <pubDate>Fri, 22 Nov 2019 21:03:48 -0500</pubDate>
       
-      <guid>https://www.contramap.dev/posts/2019-11-22-blog_revamped/</guid>
+      <guid>https://francistoth.github.io/posts/2019-11-22-blog_revamped/</guid>
       <description>This blog got created some years ago but has never been really maintained (Mostly because of a lack of time). Nonetheless I recently decided to document what I work and learn about and to use this blog for that.I gave a very cool talk about microservices at the Techno-Drink meetup recently, and really enjoyed my time. Thank you guys for hosting this event and allowing me to talk. Slides are available here.</description>
     </item>
     
