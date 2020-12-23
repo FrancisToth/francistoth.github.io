@@ -26,98 +26,6 @@ trait Json trait JSonSerializable { def toJson: Json } def serialize[A &lt;: Jso
 <meta name="generator" content="Hugo 0.68.3" />
 
 
-
-<script>
-    function openCity(evt, cityName, ref) {
-        var i = 0;
-        var bar = ref.parentElement;
-        var tab = ref.parentElement.parentElement;
-
-        var tabs = tab.getElementsByClassName("city");
-        for (i = 0; i < tabs.length; i++) {
-            tabs[i].style.display = "none";
-            if (tabs[i].id == cityName)
-                tabs[i].style.display = "block";
-        }
-
-        var tablinks = bar.getElementsByClassName("tablink");
-        for (i = 0; i < tabs.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" white0", "");
-        }
-        evt.currentTarget.className += " white0";
-    }
-
-
-hljs.registerLanguage("scala", function(e) {
-  return {   
-    k: {
-      keyword: 'type yield lazy override def with val var sealed abstract private trait object if forSome for while throw finally protected extends import final return else break new catch super class case package default try this match continue throws implicit',
-      literal: 'true false null'
-    },
-    c: [
-        hljs.QUOTE_STRING_MODE,
-        hljs.COMMENT(
-          "//",      
-          "*"        
-        ),
-        hljs.COMMENT(
-          "/\*",      
-          "\*/"        
-        )
-      ]
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</script>
 <style>
 
     .dark {
@@ -497,9 +405,97 @@ trait Json trait JSonSerializable { def toJson: Json } def serialize[A &lt;: Jso
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6">
         <path d="M12 6H0l6-6z" /></svg>
 </button>
+<script>
+    function openCity(evt, cityName, ref) {
+        var i = 0;
+        var bar = ref.parentElement;
+        var tab = ref.parentElement.parentElement;
+
+        var tabs = tab.getElementsByClassName("city");
+        for (i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+            if (tabs[i].id == cityName)
+                tabs[i].style.display = "block";
+        }
+
+        var tablinks = bar.getElementsByClassName("tablink");
+        for (i = 0; i < tabs.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" white0", "");
+        }
+        evt.currentTarget.className += " white0";
+    }
+
+
+hljs.registerLanguage("scala", function(e) {
+  return {   
+    k: {
+      keyword: 'type yield lazy override def with val var sealed abstract private trait object if forSome for while throw finally protected extends import final return else break new catch super class case package default try this match continue throws implicit',
+      literal: 'true false null'
+    },
+    c: [
+        hljs.QUOTE_STRING_MODE,
+        hljs.COMMENT(
+          "//",      
+          "*"        
+        ),
+        hljs.COMMENT(
+          "/\*",      
+          "\*/"        
+        )
+      ]
+  }
+});
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
 <script defer src="https://contramap.dev/assets/js/highlight.min.a6d52a378ec80c84a76c9c84a2d95324a9a8ae6e5cd01eedcd79293af2e59342.js" integrity="sha256-ptUqN47IDISnbJyEotlTJKmorm5c0B7tzXkpOvLlk0I="
     onload="hljs.initHighlightingOnLoad();"></script>
 <script>
