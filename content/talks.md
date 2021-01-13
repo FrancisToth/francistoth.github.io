@@ -2,8 +2,8 @@
 title:  "Talks"
 layout: "static"
 ---
-- [Functional Design -Code Mesh 2020](/talks_data/20201022_hlswlfd/index.html)
-- [Functional Design -Explore Functional Programming 2020](/talks_data/20201022_hlswlfd/index.html)
+- [Functional Design - Code Mesh 2020](/talks_data/20201022_hlswlfd/index.html)
+- [Functional Design - Explore Functional Programming 2020](/talks_data/20201022_hlswlfd/index.html)
 - [Composition (in practice) - Scala Toronto 2020](/talks_data/20200916_composition_revisited/index.html)
 - [Composition - Techno Drink 2020](/talks_data/20200615_composability/index.html)
 - [Microservices - Techno Drink 2019](talks_data/20191120_microservices/index.html)
