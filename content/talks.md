@@ -7,7 +7,7 @@ layout: "static"
 - [How I learned to stop worrying and love Functional Design - Explore Functional Programming 2020](/talks_data/20201022_hlswlfd/index.html)
 - [Composition (in practice) - Scala Toronto 2020](/talks_data/20200916_composition_revisited/index.html)
 - [Composition - Techno Drink 2020](/talks_data/20200615_composability/index.html)
-- [Microservices - Techno Drink 2019](talks_data/20191120_microservices/index.html)
+- [Microservices - Techno Drink 2019](/talks_data/20191120_microservices/index.html)
 - [Introduction to Functional Programming - Ottawa Scala meetup 2017](/talks_data/old_format/intro_to_fp.html)
 - [Introduction to Functional Programming - Scalator 2017](/talks_data/old_format/intro_to_fp.html)
 - [Introduction to Functional Programming - Lambda Montreal 2017](/talks_data/old_format/intro_to_fp.html)

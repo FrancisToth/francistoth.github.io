@@ -2,14 +2,6 @@
 
 ---
 
-## Functional Design
-
-Note:
-- Talk about design
-- let me introduce myself
-
----
-
 ## Francis Toth
 
 <div class="overflow: auto;">
