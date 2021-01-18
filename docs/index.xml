@@ -118,15 +118,7 @@ sealed trait Foo object Foo { case class Bar() extends Foo } In order to make th
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://contramap.dev/talks/</guid>
-      <description>Functional Design -Code Mesh 2020
-  Functional Design -Explore Functional Programming 2020
-  Composition (in practice) - Scala Toronto 2020
-  Composition - Techno Drink 2020
-  Microservices - Techno Drink 2019
-  Introduction to Functional Programming - Ottawa Scala meetup 2017
-  Introduction to Functional Programming - Scalator 2017
-  Introduction to Functional Programming - Lambda Montreal 2017
-  Spark 101 - Scala Montreal 2016</description>
+      <description> Functional Design - Dawscon 2021 How I learned to stop worrying and love Functional Design - Code Mesh 2020 How I learned to stop worrying and love Functional Design - Explore Functional Programming 2020 Composition (in practice) - Scala Toronto 2020 Composition - Techno Drink 2020 Microservices - Techno Drink 2019 Introduction to Functional Programming - Ottawa Scala meetup 2017 Introduction to Functional Programming - Scalator 2017 Introduction to Functional Programming - Lambda Montreal 2017 Spark 101 - Scala Montreal 2016 Spark 101 - Confoo 2016 Scala 101 - Confoo 2016 Buck - DroidCon Montreal 2015 Modularity in Android - Android Montreal 2013 Android best practices - Android Montreal 2013 Testing Android - Confoo 2012  </description>
     </item>
     
   </channel>

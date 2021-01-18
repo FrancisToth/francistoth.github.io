@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>How I learned to stop worrying and love Functional Design</title>
+
+		<link rel="stylesheet" href="/talks_data/reveal/dist/reset.css">
+		<link rel="stylesheet" href="/talks_data/reveal/dist/reveal.css">
+		<link rel="stylesheet" href="/talks_data/reveal/css/theme/francis.css" id="theme">
+		<link rel="stylesheet" href="/talks_data/reveal/css/theme/darcula.css">
+		<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+				
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="/talks_data/reveal/plugin/highlight/vs2015.css" id="highlight-theme">
+		<style>
+		 .noStretch code {
+			max-height: 100% !important;
+		 }
+		</style>
+	</head>
+	<body style="background-color: #243044;">
+		<div class="reveal">
+			<div class="slides">
+				<section data-background="#243044">
+					<section data-markdown="slides.md"  
+								 data-separator="^---"  
+								 data-separator-notes="^Note:" 
+								 data-charset="iso-8859-15" data-transition="none"> 
+					</section> 
+				</section>
+			</div>
+		</div>
+
+		<script src="/talks_data/reveal/dist/reveal.js"></script>
+		<script src="/talks_data/reveal/plugin/notes/notes.js"></script>
+		<script src="/talks_data/reveal/plugin/markdown/markdown.js"></script>
+		<script src="/talks_data/reveal/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
