@@ -119,7 +119,7 @@ As you probably guess, this program contains two side-effects:
 - `readLine()` which performs a read from the console
 - `println()` which outputs a string on it
 
-Unfortunately, the inputs and the outputs of these functions cannot be captured in any way. This is du to the nature of `readLine()` and `println()` which are **statements**. **Statements** are units of execution being run for their side-effects only. For this reason, they are eager, non-deterministic (as anything could happen at runtime), and cannot be replaced by the value they produce. There's not much we can do about this, but there should be a way to delay their execution, and represent them so that they are locally reasonable.
+Unfortunately, the inputs and the outputs of these functions cannot be captured in any way. This is due to the nature of `readLine()` and `println()` which are **statements**. **Statements** are units of execution being run for their side-effects only. For this reason, they are eager, non-deterministic (as anything could happen at runtime), and cannot be replaced by the value they produce. There's not much we can do about this, but there should be a way to delay their execution, and represent them so that they are locally reasonable.
 
 ## Classical approach
 
@@ -150,7 +150,7 @@ def program(console: Console): Unit =
 ```
 {{< /scala3 >}}
 {{< /scala >}}
-This approach makes `program` a bit safer to use because we have now control over how side-effects are performed, but calling `putStrLn` or `getStrLn()` may still result in a side-effect, preventing them to be reasoned about locally. Secondly, this approach is a poor way to manage dependencies in general as these have to be provided up-front. Applied to a more complex program, this strategy may result indeed in a lack of flexibility and in providing an ever growing context any time we need to use `program`:
+This approach makes `program` a bit safer to use because we have now control over how side-effects are performed, but calling `putStrLn` or `getStrLn()` may still result in a side-effect, preventing them to be reasoned about locally. Another downside is that this approach is a poor way to manage dependencies in general as these have to be provided up-front. Applied to a more complex program, this strategy may result indeed in a lack of flexibility and in providing an ever growing context any time we need to use `program`:
 
 {{< scala >}}
 {{< scala2 >}}
@@ -252,19 +252,19 @@ But `welcome` is just a value, and cannot do much on its own. It's a simple data
 // execution of the program (the 'how')
 welcome.run()
 ```
-Whenever `run` is called, the program performs any side-effect required to produce the final value. This encoding leads to a complete separation of a program's description (the _what_) and its execution (the _how_). As long as `run()` is not called, we keep the guarantees provided by local reasoning along with its super-powers, and have control over when side-effects are performed.
+Whenever `run` is called, the program performs any side-effect required to produce the final value. This encoding leads to a complete separation of a program's description (the _what_) and its execution (the _how_). As long as `run()` is not called, we keep the guarantees provided by local reasoning along with its super-powers, and have control over **WHEN** side-effects are performed.
 
-This tells us something about where and when side-effects should be executed. As nothing can be guaranteed beyond the execution of a side-effect, we should design the program so that it's always the last thing we do. Once we get to that point, we lose **Local Reasoning** and have reached the **edges** of the program.
+This tells us something about when and where side-effects should be executed. As nothing can be guaranteed beyond the execution of a side-effect, we should design the program so that it's always the last thing we do. Once we get to that point, we lose **Local Reasoning** and have reached the **edges** of the program.
 
 ## Hexagonal Architecture
 
-Let's take a quick detour and talk about what we mean by **edges**. As we've seen it earlier **Local Reasoning** gets compromised whenever side-effects comme into play. In order to keep the code locally reasonable, we therefore delay the moment when side effects are executed until they are absolutely needed. This practice has actually been "preached" since a long time ago. In general, a business application can be divided in two main sections:
+Let's take a quick detour and talk about what we mean by **edges**. As we've seen it earlier **Local Reasoning** gets compromised whenever side-effects come into play. In order to keep the code locally reasonable, we therefore delay the moment when side effects are executed until they are absolutely needed. This practice has actually been "preached" since a long time ago. In general, a business application can be divided in two main sections:
 - The **business logic or the core**, which is prone to change a lot
 - and the **infrastructures** relying on it, which are pretty static
 
 {{< image div_style="" img_style="display: block; margin: 0 auto; background-color: transparent; width: 50%;" src="/talks_data/20210115_functionaldesign/images/design_3.png">}}
 
-The **infrastructures** (such as a testing, a file or a database layer) all depend on the **core** and reside therefore at the edges of the program's architecture, while the core is completely agnostic about how it is used (by leveraging [inversion of control](https://en.wikipedia.org/wiki/Inversion_of_control)). This approach has different names ([Hexagonal architecture](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)), [Onion architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/), Ports and Adapts) but overall the goal is always the same: **Keep what changes the most (the core) independent of what uses it (the infrastructures)**.
+The **infrastructures** (such as a testing, a file or a database layer) all depend on the **core** and reside therefore at the edges of the program's architecture, while the core is completely agnostic about how it is used (by leveraging [inversion of control](https://en.wikipedia.org/wiki/Inversion_of_control)). This approach has different names ([Hexagonal architecture](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)), [Onion architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/), [Ports and Adapters](https://www.kennethlange.com/ports-and-adapters/)) but overall the goal is always the same: **Keep what changes the most (the core) independent of what uses it (the infrastructures)**.
 
 As it is more common to modify the business logic of an application than its infrastructures, it is paramount to prevent the core from being polluted with any aspects related to its context of usage or execution. This guarantees that the same business logic can be re-used in multiple contexts (eg: unit testing, integration testing, production, ...) without modifying it.
 
@@ -498,6 +498,7 @@ def run[A](io: IO[A]): Try[A] =
 {{< scala >}}
 
 With these new building blocks in our tool belt, we can now express more sophisticated program such as this one:
+
 ```scala
 val welcome: IO[Unit] = getStrLn.andThen(login =>
   if(login != "admin")
@@ -506,6 +507,7 @@ val welcome: IO[Unit] = getStrLn.andThen(login =>
     putStrLn("Hi " + name + "!")
 )
 ```
+
 > Note the type of `run`. It returns a `Try[A]` which captures all the outputs `run` can produce. `Try[A]` is referred to as an effect, which in contrast with a _side-effect_ is expected by the caller of `run`. In other words, the difference between an _effect_ and a _side-effect_ is their expected nature.
 
 Now let's think about how would we describe the same program using a more classical or imperative approach. We would probably need a for-loop, a try-catch, a bunch of if-blocks, and end up with a program that is 20 lines long with no way to reuse the logic we've just created. **Functional Design** enables us to do exactly that and to express more powerful constructs with minimal changes.
