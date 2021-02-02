@@ -13,7 +13,7 @@ The problem is that it's impossible to get all these ideas right without properl
 
 Coding is like having a civilized and gentle conversation with the future reader of the code. It is about expressing concepts in an intelligible way, to ultimately convince the reader about your solution's correctness. Properly conveying ideas requires these to be organized and structured, so that each of them can be fully understood separately. In some way, this exercise is very similar to what is done when writing a speech or an e-mail.
 
-## The path to Abstraction
+## The Path to Abstraction
 
 ```scala
 def incByOne(i: Int): Int = ???
@@ -83,7 +83,7 @@ In other words, a **side-effect** is produced when a function interacts with its
 
 >**Local Reasoning** enables a reader to make sense of a function without looking at how it's implemented.
 
-This is a key principle in Software Design and is what enables a component to be abstracted over without knowing about its internals. A good analogy for this is language. In common language, we do not need to explain how a car works every time one needs to be mentioned. The word _car_ can actually be used to define/compose more sophisticated concepts (such as a _sport car_) and express ourselves in a more concise and meaningful way.
+This is a key principle in Software Design and is what enables a component to be abstracted over without knowing about its internals. A good analogy for this is language. In common language, we do not need to explain how a car works every time one needs to be mentioned. The word _car_ can actually be used to define/compose more sophisticated concepts (such as a _sports car_) and express ourselves in a more concise and meaningful way.
 
 Back to Software Design, it is common to see codebases having reached a level of complexity preventing their maintainers to do any change without risking major breakdowns. The problem is that beyond a certain point, it is impossible to picture how a program behaves at runtime and be 100% confident about its output without relying on proper abstractions. In other words, **if we cannot reason about a word/function's definition, there is no way we can abstract over it to express a higher level concept**.
 
@@ -441,6 +441,8 @@ If we think about it, designing software goes back to create small simple blocks
 
 The example we took is rather simple. Let's add some spice and think about how error recovering could be implemented. In order to achieve this, we would need two additional primitives:
 
+{{< scala >}}
+{{< scala2 >}}
 ```scala
 sealed trait IO[A] { self =>
   // ...
@@ -467,6 +469,34 @@ def run[A](io: IO[A]): Try[A] =
       }
   }
 ```
+{{< /scala2 >}}
+{{< scala3 >}}
+```scala
+enum IO[+A]:
+  self =>
+  // ...
+  case Fail(th: Throwable)      extends IO[Nothing]
+  case Retry(io: IO[A], n: Int) extends IO[A]
+
+object IO:
+  def fail[A](th: Throwable): IO[A]      = Fail(th)
+  def retry[A](io: IO[A], n: Int): IO[A] =  Retry(io, n)
+
+import scala.util.{Try, Success, Failure}
+import IO._
+def run[A](io: IO[A]): Try[A] =
+  io match
+      // ...
+    case Fail(th)     => Failure(th)
+    case Retry(io, n) =>
+      run(io) match
+        case Success(a)            => Success(a)
+        case Failure(th) if n <= 1 => run(fail(th))
+        case Failure(th)           => run(Retry(io, n - 1))
+```
+{{< /scala3 >}}
+{{< scala >}}
+
 With these new building blocks in our tool belt, we can now express more sophisticated program such as this one:
 ```scala
 val welcome: IO[Unit] = getStrLn.andThen(login =>
@@ -476,6 +506,8 @@ val welcome: IO[Unit] = getStrLn.andThen(login =>
     putStrLn("Hi " + name + "!")
 )
 ```
+> Note the type of `run`. It returns a `Try[A]` which captures all the outputs `run` can produce. `Try[A]` is referred to as an effect, which in contrast with a _side-effect_ is expected by the caller of `run`. In other words, the difference between an _effect_ and a _side-effect_ is their expected nature.
+
 Now let's think about how would we describe the same program using a more classical or imperative approach. We would probably need a for-loop, a try-catch, a bunch of if-blocks, and end up with a program that is 20 lines long with no way to reuse the logic we've just created. **Functional Design** enables us to do exactly that and to express more powerful constructs with minimal changes.
 
 ## Costs
