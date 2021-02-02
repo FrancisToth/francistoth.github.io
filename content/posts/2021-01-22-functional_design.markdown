@@ -508,7 +508,7 @@ val welcome: IO[Unit] = getStrLn.andThen(login =>
 )
 ```
 
-> Note the type of `run`. It returns a `Try[A]` which captures all the outputs `run` can produce. `Try[A]` is referred to as an effect, which in contrast with a _side-effect_ is expected by the caller of `run`. In other words, the difference between an _effect_ and a _side-effect_ is their expected nature.
+> Note the type of `run`. It returns a `Try[A]` which captures all the outputs `run` can produce. `Try[A]` is referred to as an effect, which in contrast with a _side-effect_ is expected by the caller of `run`. In other words, the difference between an _effect_ and a _side-effect_ is its expected nature.
 
 Now let's think about how would we describe the same program using a more classical or imperative approach. We would probably need a for-loop, a try-catch, a bunch of if-blocks, and end up with a program that is 20 lines long with no way to reuse the logic we've just created. **Functional Design** enables us to do exactly that and to express more powerful constructs with minimal changes.
 
