@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Francis Toth / Contramap</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 22 Sep 2020 08:51:48 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 02 Feb 2021 07:00:00 -0500</lastBuildDate>
     
 	<atom:link href="https://contramap.dev/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Functional Design</title>
+      <link>https://contramap.dev/posts/2021-01-22-functional_design/</link>
+      <pubDate>Tue, 02 Feb 2021 07:00:00 -0500</pubDate>
+      
+      <guid>https://contramap.dev/posts/2021-01-22-functional_design/</guid>
+      <description>This is a long due post following the talks given recently at Dawscon, CodeMesh, and Scala Toronto about Functional Design (slides are available here).
+ Considering the amount of material available today, Software Design is rather intimidating. When it comes to best practices, one can get overwhelmed quickly and end up with no idea about how to tackle a given problem. Indeed, these guidelines can be vague, or too specific, if not contradictory sometime.</description>
+    </item>
     
     <item>
       <title>Composition</title>

@@ -21,7 +21,7 @@
 <link rel="mask-icon" href="https://contramap.dev/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<meta name="generator" content="Hugo 0.68.3" />
+<meta name="generator" content="Hugo 0.74.3" />
 <link rel="alternate" type="application/rss&#43;xml" href="https://contramap.dev/index.xml">
 <link rel="alternate" type="application/json" href="https://contramap.dev/index.json">
 
@@ -39,6 +39,11 @@
         border-radius: var(--radius);
         background-color: rgb(30, 40, 45) !important;
     }
+    .post-content p {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
     .btn {
         -webkit-border-radius: 5;
         -moz-border-radius: 5;
@@ -141,7 +146,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://contramap.dev/" />
-<meta property="og:updated_time" content="2020-09-22T08:51:48-05:00" />
+<meta property="og:updated_time" content="2021-02-02T07:00:00-05:00" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Francis Toth / Contramap"/>
 <meta name="twitter:description" content=""/>
@@ -242,6 +247,21 @@
 
   <header class="entry-header">
     <h2>
+      Functional Design
+    </h2>
+  </header>
+  <section class="entry-content">
+    <p>This is a long due post following the talks given recently at Dawscon, CodeMesh, and Scala Toronto about Functional Design (slides are available here).
+ Considering the amount of material available today, Software Design is rather intimidating. When it comes to best practices, one can get overwhelmed quickly and end up with no idea about how to tackle a given problem. Indeed, these guidelines can be vague, or too specific, if not contradictory sometime....</p>
+  </section>
+  <footer class="entry-footer">February 2, 2021
+</footer>
+  <a class="entry-link" aria-label="post link to Functional Design" href="https://contramap.dev/posts/2021-01-22-functional_design/"></a>
+</article>
+<article class="post-entry"> 
+
+  <header class="entry-header">
+    <h2>
       Composition
     </h2>
   </header>
@@ -297,20 +317,6 @@ The problem tackled by HLists is about storing elements of different types (that
   <footer class="entry-footer">February 29, 2020
 </footer>
   <a class="entry-link" aria-label="post link to HList" href="https://contramap.dev/posts/2020-02-23-hlist/"></a>
-</article>
-<article class="post-entry"> 
-
-  <header class="entry-header">
-    <h2>
-      About Variance
-    </h2>
-  </header>
-  <section class="entry-content">
-    <p>Variance is a topic that may be pretty confusing at first and which results from introducing subtyping into a programming language. The whole question asked by Variance is simple though. Given a type A and its subtype B, can one be safely substituted for the other without affecting the program correctness? John De Goes has recently made two Spartan sessions about this topic, and we will cover some of the thoughts he shared during these....</p>
-  </section>
-  <footer class="entry-footer">February 12, 2020
-</footer>
-  <a class="entry-link" aria-label="post link to About Variance" href="https://contramap.dev/posts/2020-02-12-variance/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
