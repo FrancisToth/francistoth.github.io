@@ -427,7 +427,7 @@ Let's take some steps back and look at where interpreters fit in the **Hexagonal
 
 {{< image div_style="" img_style="display: block; margin: 0 auto; background-color: transparent; width: 50%;" src="/talks_data/20210115_functionaldesign/images/design_4.png">}}
 
-Note that this approach also opens the door for optimization. We could for example write an interpreter which only purpose is to translate some business logic to an optimized evaluation function that maximizes performances at runtime, or one that optimizes the resulting data-structure into something more manageable. Sky is the limit.
+Note that this approach also opens the door for optimization. We could for example write an interpreter which only purpose is to translate some business logic to an optimized evaluation function that maximizes performances at runtime, or one that optimizes the resulting data-structure into something more manageable. The Sky is the limit.
 
 ## Composition
 
@@ -435,22 +435,22 @@ Despite being different, these two encodings happen to have many similarities. I
 
 If we think about it, designing software goes back to create small simple blocks and to combine these using operators to build bigger blocks. This is the essence of **Composition**. However, this cannot be achieved if we cannot abstract over these blocks. Hence why **Local Reasoning** and **Purity** are so critical.
 
-**Local Reasoning**, **Purity** and **Composition** are therefore the three fundamentals we should look for when writing Software, as they are what will let an API to be decomposed and recomposed, to introduce new business requirements or to modify existing ones while minimizing complexity.
+**Local Reasoning**, **Purity** and **Composition** are therefore the three fundamentals we should look for when writing Software, as these pillars will allow an API to be decomposed and recomposed in order to support new business requirements or allow us/you/one to modify & simplify existing business requirements whilst minimizing complexity.
 
-## To the infinity and beyond
+## To infinity and beyond
 
-The example we took is rather simple. Let's add some spice and think about how error recovering could be implemented. In order to achieve this, we would need two additional primitives:
+The example we took is rather simple. Let's add some spice and think about how error recovery could be implemented. In order to achieve this, we would need two additional primitives:
 
 {{< scala >}}
 {{< scala2 >}}
 ```scala
-sealed trait IO[A] { self =>
+sealed trait IO[+A] { self =>
   // ...
   def fail(th: Throwable): IO[A] = IO.fail(th)
   def retry(n: Int): IO[A]       = IO.Retry(self, n)
 }
 object IO {
-  case class Fail[A](th: Throwable)      extends IO[A]
+  case class Fail(th: Throwable)         extends IO[Nothing]
   case class Retry[A](io: IO[A], n: Int) extends IO[A]
   // ...
   def fail[A](th: Throwable)     : IO[A] = Fail(th)
@@ -495,7 +495,7 @@ def run[A](io: IO[A]): Try[A] =
         case Failure(th)           => run(Retry(io, n - 1))
 ```
 {{< /scala3 >}}
-{{< scala >}}
+{{< /scala >}}
 
 With these new building blocks in our tool belt, we can now express more sophisticated program such as this one:
 
@@ -514,9 +514,9 @@ Now let's think about how would we describe the same program using a more classi
 
 ## Costs
 
-You may wonder about the complexity of the encoding. Keep in mind that in real-world scenarios, instead of re-inventing the wheel, one would rely on existing libraries such as [ZIO](https://zio.dev/) and [Cats](https://typelevel.org/cats/). These would provide you with all the basic machinery required to express the business logic along with optimized interpreters.
+You may wonder about the complexity of the encoding. Keep in mind that in real-world scenarios, instead of re-inventing the wheel, one would rely on existing libraries such as [ZIO](https://zio.dev/) and [Cats Effect](https://typelevel.org/cats-effect/). These would provide you with all the basic machinery rto express the business logic along with providing you optimized interpreters and concurrency constructs as well.
 
-Secondly, another common question is the number of allocation required by the description of a program. Indeed, this requires some allocations in order to be created, but this is non relevant as the cost of instantiating a data-structure is negligible compared to how it is used at runtime. In other words, the performances of a program encoded like above mostly depend on how it is executed. The more optimized is the interpreter, the more efficient is the program. From that perspective, libraries such as the ones mentioned earlier are usually comparable to existing solutions available today if not more efficient (Although it always depends on the use-case).
+Secondly, another common question is the number of allocations required by the description of a program. Indeed, this requires some allocations in order to be created, but this is irrelevant as the cost of instantiating a data-structure is negligible compared to how it is used at runtime. In other words, the performance of a program encoded like above mostly depend on how it is executed. The more optimized the interpreter, the more efficient is the program. From that perspective, libraries such as the ones mentioned earlier are usually comparable to existing solutions available today if not more efficient (Although it always depends on the use-case).
 
 ## Wrap-Up
 
@@ -528,10 +528,10 @@ It's important to mention that overall this is not really about the paradigm use
 
 The Functional Programming course provided by John DeGoes on [Patreon](https://www.patreon.com/jdegoes/posts) is a good place to start, and is where I've learnt a lot regarding the concepts described in this post.
 
-Secondly, there is the [Zionomicon](https://www.zionomicon.com/) which is [ZIO](https://zio.dev/)'s bible, and [Essential Effect](https://essentialeffects.dev/) by Adam Rosien, which is more focused on [Cats](https://typelevel.org/cats/). The combination of these two can give you a good picture of how Functional Programming is today done in Scala. I would also recommend [Functional Programming with Scala](https://www.manning.com/books/functional-programming-in-scala) aka the "Red book" which is good but a bit rough for new comers.
+Secondly, there is the [Zionomicon](https://www.zionomicon.com/) which is [ZIO](https://zio.dev/)'s bible, and [Essential Effect](https://essentialeffects.dev/) by Adam Rosien, which is more focused on [Cats Effect](https://typelevel.org/cats-effect/). The combination of these two can give you a good picture of how Functional Programming is today done in Scala. I would also recommend [Functional Programming with Scala](https://www.manning.com/books/functional-programming-in-scala) aka the "Red book" which is good but a bit rough for new comers (Please note that there has been a lot of innovation in this space so you might be looking at outdated content especially when it comes to certain later chapters).
 
 Finally, [F# for fun and profit](https://fsharpforfunandprofit.com/) is also a good resource. It's not Scala but the concepts described are relevant to most of languages, and Scott Wlaschin (its author) is an incredible teacher, who worked among others on integrating [DDD using a Functional approach](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/).
 
 ## Thanks
 
-I'd like to thank [John De Goes](https://github.com/jdegoes), [Calvin Lee Fernandes](https://www.linkedin.com/in/calvin-lee-fernandes/) along with the Spartan community for its support, help and friendship, and of course, you for reading :)
+I'd like to thank [John De Goes](https://github.com/jdegoes), [Calvin Lee Fernandes](https://www.linkedin.com/in/calvin-lee-fernandes/) along with the Spartan community for their support, help and friendship, and of course, you for reading :)
