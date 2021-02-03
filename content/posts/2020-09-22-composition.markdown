@@ -637,5 +637,5 @@ This post was rather long, so here is a quick recap:
 - Provide these with **binary operators** to compose them forever (`bothWith`, `eitherWith`, `zipWith`, ...)
 - Use the adequate encoding (executable/declarative) depending on your use-case but keep in mind that a **declarative encoding** suits a greenfield project better.
 
-The code of this post is all available [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/dev/contramap/composition/PapersPlease.scala). Thank you for reading, and thanks to [John De Goes for all his time teaching us writing better code](https://www.patreon.com/jdegoes/posts).
+The code of this post is all available [here](https://github.com/FrancisToth/francistoth.github.io/tree/master/static/src/main/scala/dev/contramap/composition/PapersPlease.scala). Thank you for reading, and thanks to [John De Goes for all his time teaching us writing better code](https://www.patreon.com/jdegoes/posts).
 

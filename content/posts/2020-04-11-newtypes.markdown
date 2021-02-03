@@ -157,7 +157,7 @@ type Mult = Mult.WrappedType
 val m0: Mult = Mult.wrap(1) // compiles
 val m1: Int  = Mult.wrap(1) // compiles
 ```
-**Note**: We won't go through the `Subtype` facilities implementation to avoid going too much through similar code. You may refer to the complete code [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/io/github/francistoth/newtype).
+**Note**: We won't go through the `Subtype` facilities implementation to avoid going too much through similar code. You may refer to the complete code [here](https://github.com/FrancisToth/francistoth.github.io/tree/master/static/io/github/francistoth/newtype).
 
 So far, in terms of memory allocation the only cost is the one implied by creating `Mult`. Wrapping a type to a `WrappedType` only consists of a function call with no extra allocation. This approach is therefore more contraining than a type alias but at least as efficient memory wise than using a value class.<br/>
 
@@ -348,7 +348,7 @@ Mult(42) match {
   case Mult(i) => i
 } // 42
 ```
-There we go. The code is available [here](https://github.com/FrancisToth/francistoth.github.io/blob/master/src/main/scala/io/github/francistoth/newtype).
+There we go. The code is available [here](https://github.com/FrancisToth/francistoth.github.io/tree/master/static/src/main/scala/io/github/francistoth/newtype).
 
 
 ## Additional thoughts
