@@ -18,7 +18,8 @@
       
       <guid>https://contramap.dev/posts/2021-01-22-functional_design/</guid>
       <description>This is a long due post following the talks given recently at Dawscon, CodeMesh, and Scala Toronto about Functional Design (slides are available here).
- Considering the amount of material available today, Software Design is rather intimidating. When it comes to best practices, one can get overwhelmed quickly and end up with no idea about how to tackle a given problem. Indeed, these guidelines can be vague, or too specific, if not contradictory sometime.</description>
+  This post has been updated since its first publication. As noticed by Alwin and following this conversation, the name IO can be confusing so it has been replaced by Console.
+ Considering the amount of material available today, Software Design is rather intimidating.</description>
     </item>
     
     <item>

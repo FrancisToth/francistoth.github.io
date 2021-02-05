@@ -7,6 +7,8 @@ brief:
 
 > This is a long due post following the talks given recently at [Dawscon](https://youtu.be/OE_rRu7Uv_E), [CodeMesh](https://www.youtube.com/watch?v=0sXxQyi0UTA&feature=emb_logo), and Scala Toronto about Functional Design (slides are available [here](/talks/)).
 
+> This post has been updated since its first publication. As noticed by [Alwin](https://twitter.com/AnOceanGyre) and following this [conversation](https://twitter.com/francistoth/status/1356628771940560902), the name `IO` can be confusing so it has been replaced by `Console`.
+
 Considering the amount of material available today, Software Design is rather intimidating. When it comes to best practices, one can get overwhelmed quickly and end up with no idea about how to tackle a given problem. Indeed, these guidelines can be vague, or too specific, if not contradictory sometime.
 
 The problem is that it's impossible to get all these ideas right without properly understanding their essence. Unfortunately, this is something that tends to be forgotten when teaching design. Too often, we tend to overwhelm people with dozens and dozens of guidelines without actually conveying what ties them all together.
@@ -180,14 +182,14 @@ Another approach is to bring these statements back to the world of values:
 ```scala
 import scala.io.StdIn.readLine
 
-class IO[A](val run: () => A)
+class Console[A](val run: () => A)
 
-object IO {
-  def apply[A](run: => A): IO[A] = 
-    new IO(() => run)
+object Console {
+  def apply[A](run: => A): Console[A] = 
+    new Console(() => run)
 
-  def putStrLn(s: String): IO[Unit]   = IO(println(s))
-  def getStrLn           : IO[String] = IO(readLine())
+  def putStrLn(s: String): Console[Unit]   = Console(println(s))
+  def getStrLn           : Console[String] = Console(readLine())
 }
 ```
 {{< /scala2 >}}
@@ -195,31 +197,31 @@ object IO {
 ```scala
 import scala.io.StdIn.readLine
 
-class IO[A](val run: () => A)
+class Console[A](val run: () => A)
 
-object IO:
-  def apply[A](run: => A): IO[A] = 
-    new IO(() => run)
+object Console:
+  def apply[A](run: => A): Console[A] = 
+    new Console(() => run)
 
-  def putStrLn(s: String): IO[Unit]   = IO(println(s))
-  def getStrLn           : IO[String] = IO(readLine())
+  def putStrLn(s: String): Console[Unit]   = Console(println(s))
+  def getStrLn           : Console[String] = Console(readLine())
 ```
 {{< /scala3 >}}
 {{< /scala >}}
-`IO` models a lazy instruction (`run`) which once executed produces an `A`. This enables the conversion of statements such as `println` into values, and to delay the resulting side-effects produced during execution. In order to model the previous program, we would however need a way to sequence two `IO` which  can be done using the `andThen` operator:
+`Console` models a lazy instruction (`run`) which once executed produces an `A`. This enables the conversion of statements such as `println` into values, and to delay the resulting side-effects produced during execution. In order to model the previous program, we would however need a way to sequence two `Console` which  can be done using the `andThen` operator:
 
 {{< scala >}}
 {{< scala2 >}}
 ```scala
-class IO[A](val run: () => A) {
-  def andThen[B](f: A => IO[B]): IO[B] =
-    IO(f(run()).run())
+class Console[A](val run: () => A) {
+  def andThen[B](f: A => Console[B]): Console[B] =
+    Console(f(run()).run())
 }
 // ...
-import IO._
+import Console._
 
 // description of the program ('the what')
-val welcome: IO[Unit] =
+val welcome: Console[Unit] =
   getStrLn.andThen(name =>
     putStrLn("Hi " + name + "!")
   )
@@ -227,21 +229,21 @@ val welcome: IO[Unit] =
 {{< /scala2 >}}
 {{< scala3 >}}
 ```scala
-class IO[A](val run: () => A):
-  def andThen[B](f: A => IO[B]): IO[B] =
-    IO(f(run()).run())
+class Console[A](val run: () => A):
+  def andThen[B](f: A => Console[B]): Console[B] =
+    Console(f(run()).run())
 // ...
-import IO._
+import Console._
 
 // description of the program ('the what')
-val welcome: IO[Unit] =
+val welcome: Console[Unit] =
   getStrLn.andThen(name =>
     putStrLn("Hi " + name + "!")
   )
 ```
 {{< /scala3 >}}
 {{< /scala >}}
-`andThen` pipes the result of an `IO` to a function producing another `IO` (you may know this combinator as `flatMap`). Using `andThen`, we can now express the previous program and substitute `welcome` by its definition without affecting the program's final output:
+`andThen` pipes the result of an `Console` to a function producing another `Console` (you may know this combinator as `flatMap`). Using `andThen`, we can now express the previous program and substitute `welcome` by its definition without affecting the program's final output:
 ```scala
 // prog1 and prog2 are indeed equivalent
 val prog1 = welcome
@@ -268,7 +270,7 @@ The **infrastructures** (such as a testing, a file or a database layer) all depe
 
 As it is more common to modify the business logic of an application than its infrastructures, it is paramount to prevent the core from being polluted with any aspects related to its context of usage or execution. This guarantees that the same business logic can be re-used in multiple contexts (eg: unit testing, integration testing, production, ...) without modifying it.
 
-## Revisiting IO
+## Revisiting Console
 
 Let's look back at our example. `welcome` is locally reasonable, but it  has a direct dependency on its execution details (represented by `run`). Ideally, we'd like to invert this dependency so that the business logic described by `welcome` can be re-used to create programs interacting with different environment such as a console, a web server, or anything else.
 
@@ -277,33 +279,33 @@ Secondly this approach shows some limits in the testing phase:
 ```scala
 // Using scala-test
 "StrLn" should "read an input from the console" in {
-  val actual: IO[String] = ???
+  val actual: Console[String] = ???
   actual.run() should be getStrLn.run() // ???
 }
 ```
-With the current implementation, two `IO` cannot be compared without executing their respective side-effects, which brings us back to square one. Let's see if we can solve this problem using a different encoding:
+With the current implementation, two `Console` cannot be compared without executing their respective side-effects, which brings us back to square one. Let's see if we can solve this problem using a different encoding:
 {{< scala >}}
 {{< scala2 >}}
 ```scala
-sealed trait IO[A] { self =>
-  def andThen[B](f: A => IO[B]): IO[B] =
-    IO.AndThen(self, f)
+sealed trait Console[A] { self =>
+  def andThen[B](f: A => Console[B]): Console[B] =
+    Console.AndThen(self, f)
 }
-object IO {
-  case class PutStrLn(s: String) extends IO[Unit]
-  case object GetStrLn           extends IO[String]
+object Console {
+  case class PutStrLn(s: String) extends Console[Unit]
+  case object GetStrLn           extends Console[String]
 
   case class AndThen[A, B](
-    io: IO[A], 
-    f: A => IO[B]
-  ) extends IO[B]
+    console: Console[A], 
+    f: A => Console[B]
+  ) extends Console[B]
 
-  def putStrLn(s: String): IO[Unit]   = PutStrLn(s)
-  def getStrLn           : IO[String] = GetStrLn
+  def putStrLn(s: String): Console[Unit]   = PutStrLn(s)
+  def getStrLn           : Console[String] = GetStrLn
 }
 
 // ...
-val welcome: IO[Unit] =
+val welcome: Console[Unit] =
   getStrLn.andThen(name =>
     putStrLn("Hi " + name + "!")
   )
@@ -312,22 +314,22 @@ val welcome: IO[Unit] =
 {{< /scala2 >}}
 {{< scala3 >}}
 ```scala
-enum IO[A]:
+enum Console[A]:
   self =>
 
-  def andThen[B](f: A => IO[B]): IO[B] =
+  def andThen[B](f: A => Console[B]): Console[B] =
     AndThen(self, f)
 
-  case PutStrLn(s: String) extends IO[Unit]
-  case GetStrLn            extends IO[String]
-  case AndThen[A, B](io: IO[A], f: A => IO[B]) extends IO[B]
+  case PutStrLn(s: String) extends Console[Unit]
+  case GetStrLn            extends Console[String]
+  case AndThen[A, B](console: Console[A], f: A => Console[B]) extends Console[B]
 
-object IO:
-  def putStrLn(s: String): IO[Unit]   = PutStrLn(s)
-  def getStrLn           : IO[String] = GetStrLn
+object Console:
+  def putStrLn(s: String): Console[Unit]   = PutStrLn(s)
+  def getStrLn           : Console[String] = GetStrLn
 
 // ...
-val welcome: IO[Unit] =
+val welcome: Console[Unit] =
   getStrLn.andThen(name =>
     putStrLn("Hi " + name + "!")
   )
@@ -336,32 +338,32 @@ val welcome: IO[Unit] =
 {{< /scala3 >}}
 {{< /scala >}}
 
-In this encoding, each instruction of our API is represented by a pure  data-structure. The definition of `welcome` stays the same, but this time it is represented by a recursive tree structure which can be inspected, traversed and even optimized if needed. Secondly, instead of embedding the evaluation function `run` into `IO`, we define it aside:
+In this encoding, each instruction of our API is represented by a pure  data-structure. The definition of `welcome` stays the same, but this time it is represented by a recursive tree structure which can be inspected, traversed and even optimized if needed. Secondly, instead of embedding the evaluation function `run` into `Console`, we define it aside:
 
 {{< scala >}}
 {{< scala2 >}}
 ```scala
-def run[A](program: IO[A]): A = 
+def run[A](program: Console[A]): A = 
   program match {
     case GetStrLn      => scala.io.StdIn.readLine()
     case PutStrLn(s)   => println(s)
     case AndThen(c, f)   =>
       // not stack safe!!
-      val io = f(run(c))
-      run(io)
+      val console = f(run(c))
+      run(console)
   }
 ```
 {{< /scala2 >}}
 {{< scala3 >}}
 ```scala
-def run[A](program: IO[A]): A = 
+def run[A](program: Console[A]): A = 
   program match
     case GetStrLn      => scala.io.StdIn.readLine()
     case PutStrLn(s)   => println(s)
     case AndThen(c, f)   =>
       // not stack safe!!
-      val io = f(run(c))
-      run(io)
+      val console = f(run(c))
+      run(console)
 ```
 {{< /scala3 >}}
 {{< /scala >}}
@@ -382,13 +384,13 @@ case class State(inputs: List[String], outputs: List[String] = List.empty) {
 }
 
 // test-specific evaluation function / interpreter
-def testRun[A](program: IO[A], state: State): (State, A) =
+def testRun[A](program: Console[A], state: State): (State, A) =
   program match {
     case GetStrLn     => state.popInput("Inputs exhausted!")
     case PutStrLn(s)  => state.pushOutput(s)
-    case AndThen(io, f) =>
+    case AndThen(console, f) =>
       // not stack safe!!
-      val (state0, a) = testRun(io, state)
+      val (state0, a) = testRun(console, state)
       testRun(f(a), state0)
   }
 ```
@@ -404,19 +406,19 @@ case class State(inputs: List[String], outputs: List[String] = List.empty):
     (copy(outputs = outputs :+ s), ())
 
 // test-specific evaluation function / interpreter
-def testRun[A](program: IO[A], state: State): (State, A) =
+def testRun[A](program: Console[A], state: State): (State, A) =
   program match
     case GetStrLn     => state.popInput("Inputs exhausted!")
     case PutStrLn(s)  => state.pushOutput(s)
-    case AndThen(io, f) =>
+    case AndThen(console, f) =>
       // not stack safe!!
-      val (state0, a) = testRun(io, state)
+      val (state0, a) = testRun(console, state)
       testRun(f(a), state0)
 ```
 {{< /scala3 >}}
 {{< /scala >}}
 
-`run` and `testRun` go through each layer of the program provided and perform any side-effect required to produce the final value. Note these implementations are not stack-safe and would blow up with infinite recursive programs. This can be fixed using Trampolining but that will be the topic of another blog post. In any case, thanks to this approach, comparing two `IO` is now trivial:
+`run` and `testRun` go through each layer of the program provided and perform any side-effect required to produce the final value. Note these implementations are not stack-safe and would blow up with infinite recursive programs. This can be fixed using Trampolining but that will be the topic of another blog post. In any case, thanks to this approach, comparing two `Console` is now trivial:
 
 ```scala
 val actual   = testRun(welcome, State(List("Bob")))
@@ -444,55 +446,56 @@ The example we took is rather simple. Let's add some spice and think about how e
 {{< scala >}}
 {{< scala2 >}}
 ```scala
-sealed trait IO[+A] { self =>
+sealed trait Console[+A] { self =>
   // ...
-  def fail(th: Throwable): IO[A] = IO.fail(th)
-  def retry(n: Int): IO[A]       = IO.Retry(self, n)
+  def fail(th: Throwable): Console[A] = Console.fail(th)
+  def retry(n: Int): Console[A]       = Console.Retry(self, n)
 }
-object IO {
-  case class Fail(th: Throwable)         extends IO[Nothing]
-  case class Retry[A](io: IO[A], n: Int) extends IO[A]
+object Console {
+  case class Fail(th: Throwable)                   extends Console[Nothing]
+  case class Retry[A](console: Console[A], n: Int) extends Console[A]
   // ...
-  def fail[A](th: Throwable)     : IO[A] = Fail(th)
-  def retry[A](io: IO[A], n: Int): IO[A] = Retry(io, n)
+  def fail[A](th: Throwable)     : Console[A] = Fail(th)
+  def retry[A](console: Console[A], n: Int): Console[A] = Retry(console, n)
 }
 
-def run[A](io: IO[A]): Try[A] =
-  io match {
+def run[A](console: Console[A]): Try[A] =
+  console match {
       // ...
     case Fail(th)     => Failure(th)
-    case Retry(io, n) =>
-      run(io) match {
+    case Retry(console, n) =>
+      run(console) match {
         case Success(a)            => Success(a)
         case Failure(th) if n <= 1 => run(fail(th))
-        case Failure(th)           => run(Retry(io, n - 1))
+        case Failure(th)           => run(Retry(console, n - 1))
       }
   }
 ```
 {{< /scala2 >}}
 {{< scala3 >}}
 ```scala
-enum IO[+A]:
+enum Console[+A]:
   self =>
   // ...
-  case Fail(th: Throwable)      extends IO[Nothing]
-  case Retry(io: IO[A], n: Int) extends IO[A]
+  case Fail(th: Throwable)      extends Console[Nothing]
+  case Retry(console: Console[A], n: Int) extends Console[A]
 
-object IO:
-  def fail[A](th: Throwable): IO[A]      = Fail(th)
-  def retry[A](io: IO[A], n: Int): IO[A] =  Retry(io, n)
+object Console:
+  def fail[A](th: Throwable): Console[A]                = Fail(th)
+  def retry[A](console: Console[A], n: Int): Console[A] =  Retry(console, n)
 
 import scala.util.{Try, Success, Failure}
-import IO._
-def run[A](io: IO[A]): Try[A] =
-  io match
+import Console._
+def run[A](console: Console[A]): Try[A] =
+  console match
       // ...
     case Fail(th)     => Failure(th)
-    case Retry(io, n) =>
-      run(io) match
+    case Retry(console, n) =>
+      // not stack safe
+      run(console) match
         case Success(a)            => Success(a)
         case Failure(th) if n <= 1 => run(fail(th))
-        case Failure(th)           => run(Retry(io, n - 1))
+        case Failure(th)           => run(Retry(console, n - 1))
 ```
 {{< /scala3 >}}
 {{< /scala >}}
@@ -500,7 +503,7 @@ def run[A](io: IO[A]): Try[A] =
 With these new building blocks in our tool belt, we can now express more sophisticated program such as this one:
 
 ```scala
-val welcome: IO[Unit] = getStrLn.andThen(login =>
+val welcome: Console[Unit] = getStrLn.andThen(login =>
   if(login != "admin")
     fail(new InvalidLoginException())
   else
